@@ -1,82 +1,145 @@
-import { Button } from '@/components/ui/button';
-import { Rocket, Menu, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Button,
+  IconButton,
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemText,
+  Divider,
+  Container,
+} from '@mui/material';
+import { Rocket, Menu, X } from 'lucide-react';
+
+const navLinks = [
+  { label: 'Features', href: '/#features' },
+  { label: 'For You', href: '/#roles' },
+];
 
 export function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const drawer = (
+    <Box className="w-64 pt-4">
+      <List>
+        {navLinks.map((link) => (
+          <ListItemButton
+            key={link.label}
+            component={Link}
+            to={link.href}
+            onClick={handleDrawerToggle}
+          >
+            <ListItemText primary={link.label} />
+          </ListItemButton>
+        ))}
+      </List>
+      <Divider className="my-4" />
+      <Box className="px-4 space-y-2">
+        <Button
+          component={Link}
+          to="/auth?mode=login"
+          variant="outlined"
+          fullWidth
+          onClick={handleDrawerToggle}
+        >
+          Sign In
+        </Button>
+        <Button
+          component={Link}
+          to="/auth"
+          variant="contained"
+          fullWidth
+          onClick={handleDrawerToggle}
+        >
+          Get Started
+        </Button>
+      </Box>
+    </Box>
+  );
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/50">
-      <div className="container px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-gradient-hero flex items-center justify-center">
-              <Rocket className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold">StartupHub</span>
-          </Link>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <Link to="/#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-              Features
-            </Link>
-            <Link to="/#roles" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-              For You
-            </Link>
-          </div>
-          
-          {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" asChild>
-              <Link to="/auth?mode=login">Sign In</Link>
-            </Button>
-            <Button variant="hero" asChild>
-              <Link to="/auth">Get Started</Link>
-            </Button>
-          </div>
-          
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 rounded-lg hover:bg-secondary transition-colors"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
-        
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border/50">
-            <div className="flex flex-col gap-4">
-              <Link 
-                to="/#features" 
-                className="px-4 py-2 text-sm font-medium hover:bg-secondary rounded-lg transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Features
-              </Link>
-              <Link 
-                to="/#roles" 
-                className="px-4 py-2 text-sm font-medium hover:bg-secondary rounded-lg transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                For You
-              </Link>
-              <div className="flex flex-col gap-2 px-4 pt-4 border-t border-border/50">
-                <Button variant="outline" asChild className="w-full">
-                  <Link to="/auth?mode=login" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
+    <>
+      <AppBar position="fixed" color="transparent">
+        <Container maxWidth="lg">
+          <Toolbar disableGutters className="h-16">
+            {/* Logo */}
+            <Box
+              component={Link}
+              to="/"
+              className="flex items-center gap-2 no-underline text-inherit"
+            >
+              <Box className="w-9 h-9 rounded-xl bg-gradient-hero flex items-center justify-center">
+                <Rocket className="w-5 h-5 text-white" />
+              </Box>
+              <span className="text-xl font-bold text-foreground">StartupHub</span>
+            </Box>
+
+            {/* Desktop Navigation */}
+            <Box className="hidden md:flex items-center gap-8 ml-12">
+              {navLinks.map((link) => (
+                <Button
+                  key={link.label}
+                  component={Link}
+                  to={link.href}
+                  color="inherit"
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  {link.label}
                 </Button>
-                <Button variant="hero" asChild className="w-full">
-                  <Link to="/auth" onClick={() => setIsMenuOpen(false)}>Get Started</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </nav>
+              ))}
+            </Box>
+
+            <Box className="flex-grow" />
+
+            {/* Desktop CTA */}
+            <Box className="hidden md:flex items-center gap-3">
+              <Button
+                component={Link}
+                to="/auth?mode=login"
+                color="inherit"
+              >
+                Sign In
+              </Button>
+              <Button
+                component={Link}
+                to="/auth"
+                variant="contained"
+              >
+                Get Started
+              </Button>
+            </Box>
+
+            {/* Mobile Menu Button */}
+            <IconButton
+              className="md:hidden"
+              onClick={handleDrawerToggle}
+              edge="end"
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </IconButton>
+          </Toolbar>
+        </Container>
+      </AppBar>
+
+      {/* Mobile Drawer */}
+      <Drawer
+        variant="temporary"
+        anchor="right"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{ keepMounted: true }}
+        className="md:hidden"
+      >
+        {drawer}
+      </Drawer>
+    </>
   );
 }

@@ -1,35 +1,57 @@
-import { Rocket } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Box, Container, Typography, Stack } from '@mui/material';
+import { Rocket } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="py-12 bg-card border-t border-border/50">
-      <div className="container px-4">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+    <Box component="footer" className="py-12 bg-card border-t border-border/50">
+      <Container maxWidth="lg">
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={3}
+        >
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-hero flex items-center justify-center">
-              <Rocket className="w-4 h-4 text-primary-foreground" />
-            </div>
-            <span className="text-lg font-bold">StartupHub</span>
-          </Link>
-          
+          <Box
+            component={Link}
+            to="/"
+            className="flex items-center gap-2 no-underline text-inherit"
+          >
+            <Box className="w-8 h-8 rounded-lg bg-gradient-hero flex items-center justify-center">
+              <Rocket className="w-4 h-4 text-white" />
+            </Box>
+            <Typography variant="h6" className="font-bold">
+              StartupHub
+            </Typography>
+          </Box>
+
           {/* Copyright */}
-          <p className="text-sm text-muted-foreground">
+          <Typography variant="body2" className="text-muted-foreground">
             © {new Date().getFullYear()} StartupHub. All rights reserved.
-          </p>
-          
+          </Typography>
+
           {/* Links */}
-          <div className="flex items-center gap-6">
-            <Link to="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <Stack direction="row" spacing={3}>
+            <Typography
+              component={Link}
+              to="/privacy"
+              variant="body2"
+              className="text-muted-foreground hover:text-foreground transition-colors no-underline"
+            >
               Privacy
-            </Link>
-            <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            </Typography>
+            <Typography
+              component={Link}
+              to="/terms"
+              variant="body2"
+              className="text-muted-foreground hover:text-foreground transition-colors no-underline"
+            >
               Terms
-            </Link>
-          </div>
-        </div>
-      </div>
-    </footer>
+            </Typography>
+          </Stack>
+        </Stack>
+      </Container>
+    </Box>
   );
 }

@@ -1,3 +1,4 @@
+import { Box, Container, Typography, Paper, Grid } from '@mui/material';
 import { Lightbulb, Handshake, Target, Zap, Shield, Globe } from 'lucide-react';
 
 const features = [
@@ -35,34 +36,43 @@ const features = [
 
 export function Features() {
   return (
-    <section className="py-24 bg-card">
-      <div className="container px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+    <Box component="section" className="py-24 bg-card">
+      <Container maxWidth="lg">
+        <Box className="text-center mb-16">
+          <Typography variant="h2" className="text-3xl sm:text-4xl font-bold mb-4">
             Everything You Need to{' '}
             <span className="text-gradient">Succeed</span>
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          </Typography>
+          <Typography
+            variant="body1"
+            className="text-lg text-muted-foreground max-w-2xl mx-auto"
+          >
             Our platform provides all the tools and connections you need to take your startup from idea to success.
-          </p>
-        </div>
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          </Typography>
+        </Box>
+
+        <Grid container spacing={4} className="max-w-6xl mx-auto">
           {features.map((feature, index) => (
-            <div
-              key={feature.title}
-              className="group p-6 rounded-2xl bg-background border border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                <feature.icon className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground">{feature.description}</p>
-            </div>
+            <Grid size={{ xs: 12, md: 6, lg: 4 }} key={feature.title}>
+              <Paper
+                elevation={0}
+                className="group h-full p-6 rounded-2xl bg-background border border-border/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                sx={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <Box className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                  <feature.icon className="w-6 h-6 text-primary" />
+                </Box>
+                <Typography variant="h6" className="font-semibold mb-2">
+                  {feature.title}
+                </Typography>
+                <Typography variant="body2" className="text-muted-foreground">
+                  {feature.description}
+                </Typography>
+              </Paper>
+            </Grid>
           ))}
-        </div>
-      </div>
-    </section>
+        </Grid>
+      </Container>
+    </Box>
   );
 }
