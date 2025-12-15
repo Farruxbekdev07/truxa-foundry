@@ -1,22 +1,40 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import {
+  Box,
+  Button,
+  Typography,
+  Paper,
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Chip,
+  CircularProgress,
+  Divider,
+  Container,
+  Grid,
+  Stack,
+} from '@mui/material';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
-import { 
-  Rocket, 
-  TrendingUp, 
-  GraduationCap, 
-  Code, 
-  LogOut, 
-  Plus, 
+import {
+  Rocket,
+  TrendingUp,
+  GraduationCap,
+  Code,
+  LogOut,
+  Plus,
   Users,
   LayoutDashboard,
   Briefcase,
   User,
-  Loader2
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { roleColors } from '@/theme/muiTheme';
 
 interface Startup {
   id: string;
@@ -33,6 +51,14 @@ interface Startup {
     full_name: string;
   };
 }
+
+const DRAWER_WIDTH = 256;
+
+const navItems = [
+  { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
+  { icon: Briefcase, label: 'Startups', href: '/dashboard' },
+  { icon: Users, label: 'Network', href: '/dashboard' },
+];
 
 export default function Dashboard() {
   const { user, profile, loading, signOut } = useAuth();
@@ -54,10 +80,8 @@ export default function Dashboard() {
 
   const fetchStartups = async () => {
     setLoadingStartups(true);
-    let query = supabase
-      .from('startups')
-      .select('*, profiles(full_name)');
-    
+    let query = supabase.from('startups').select('*, profiles(full_name)');
+
     if (profile?.role === 'founder') {
       query = query.eq('founder_id', user?.id);
     } else if (profile?.role === 'developer') {
@@ -67,7 +91,7 @@ export default function Dashboard() {
     } else if (profile?.role === 'investor') {
       query = query.eq('looking_for_funding', true);
     }
-    
+
     const { data } = await query.order('created_at', { ascending: false });
     setStartups((data as Startup[]) || []);
     setLoadingStartups(false);
@@ -80,9 +104,9 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
+      <Box className="min-h-screen flex items-center justify-center bg-background">
+        <CircularProgress />
+      </Box>
     );
   }
 
@@ -90,228 +114,303 @@ export default function Dashboard() {
 
   const getRoleIcon = () => {
     switch (profile.role) {
-      case 'founder': return Rocket;
-      case 'investor': return TrendingUp;
-      case 'mentor': return GraduationCap;
-      case 'developer': return Code;
-      default: return User;
+      case 'founder':
+        return Rocket;
+      case 'investor':
+        return TrendingUp;
+      case 'mentor':
+        return GraduationCap;
+      case 'developer':
+        return Code;
+      default:
+        return User;
     }
   };
 
   const getRoleColor = () => {
-    switch (profile.role) {
-      case 'founder': return 'founder';
-      case 'investor': return 'investor';
-      case 'mentor': return 'mentor';
-      case 'developer': return 'developer';
-      default: return 'primary';
-    }
+    return roleColors[profile.role as keyof typeof roleColors] || roleColors.founder;
   };
 
   const getDashboardTitle = () => {
     switch (profile.role) {
-      case 'founder': return 'Your Startups';
-      case 'investor': return 'Investment Opportunities';
-      case 'mentor': return 'Startups Seeking Guidance';
-      case 'developer': return 'Startups Hiring';
-      default: return 'Dashboard';
+      case 'founder':
+        return 'Your Startups';
+      case 'investor':
+        return 'Investment Opportunities';
+      case 'mentor':
+        return 'Startups Seeking Guidance';
+      case 'developer':
+        return 'Startups Hiring';
+      default:
+        return 'Dashboard';
     }
   };
 
   const RoleIcon = getRoleIcon();
 
+  const drawer = (
+    <Box className="h-full flex flex-col p-6">
+      <Box component={Link} to="/" className="flex items-center gap-2 mb-8 no-underline text-inherit">
+        <Box className="w-9 h-9 rounded-xl bg-gradient-hero flex items-center justify-center">
+          <Rocket className="w-5 h-5 text-white" />
+        </Box>
+        <Typography variant="h6" className="font-bold">
+          StartupHub
+        </Typography>
+      </Box>
+
+      <List className="flex-1 space-y-1">
+        {navItems.map((item, index) => (
+          <ListItemButton
+            key={item.label}
+            component={Link}
+            to={item.href}
+            selected={index === 0}
+            className="rounded-lg mb-1"
+          >
+            <ListItemIcon className="min-w-0 mr-3">
+              <item.icon className="w-5 h-5" />
+            </ListItemIcon>
+            <ListItemText primary={item.label} />
+          </ListItemButton>
+        ))}
+      </List>
+
+      <Divider className="my-4" />
+
+      <Box className="flex items-center gap-3 mb-4">
+        <Box
+          className="w-10 h-10 rounded-full flex items-center justify-center"
+          sx={{ backgroundColor: `${getRoleColor()}20` }}
+        >
+          <RoleIcon className="w-5 h-5" style={{ color: getRoleColor() }} />
+        </Box>
+        <Box className="flex-1 min-w-0">
+          <Typography variant="body2" className="font-medium truncate">
+            {profile.full_name}
+          </Typography>
+          <Typography variant="caption" className="text-muted-foreground capitalize">
+            {profile.role}
+          </Typography>
+        </Box>
+      </Box>
+
+      <Button
+        onClick={handleSignOut}
+        startIcon={<LogOut className="w-5 h-5" />}
+        color="inherit"
+        className="justify-start text-muted-foreground hover:text-destructive"
+      >
+        Sign Out
+      </Button>
+    </Box>
+  );
+
+  const stats = [
+    { label: 'Total Startups', value: startups.length, icon: Rocket },
+    { label: 'Looking for Team', value: startups.filter((s) => s.looking_for_team).length, icon: Users },
+    { label: 'Seeking Funding', value: startups.filter((s) => s.looking_for_funding).length, icon: TrendingUp },
+    { label: 'Need Mentorship', value: startups.filter((s) => s.looking_for_mentorship).length, icon: GraduationCap },
+  ];
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-64 bg-card border-r border-border p-6 hidden lg:flex flex-col">
-        <Link to="/" className="flex items-center gap-2 mb-8">
-          <div className="w-9 h-9 rounded-xl bg-gradient-hero flex items-center justify-center">
-            <Rocket className="w-5 h-5 text-primary-foreground" />
-          </div>
-          <span className="text-xl font-bold">StartupHub</span>
-        </Link>
-        
-        <nav className="flex-1 space-y-1">
-          <Link
-            to="/dashboard"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/10 text-primary font-medium"
-          >
-            <LayoutDashboard className="w-5 h-5" />
-            Dashboard
-          </Link>
-          <Link
-            to="/dashboard"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
-          >
-            <Briefcase className="w-5 h-5" />
-            Startups
-          </Link>
-          <Link
-            to="/dashboard"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
-          >
-            <Users className="w-5 h-5" />
-            Network
-          </Link>
-        </nav>
-        
-        <div className="pt-6 border-t border-border">
-          <div className="flex items-center gap-3 mb-4">
-            <div 
-              className="w-10 h-10 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: `hsl(var(--${getRoleColor()}) / 0.15)` }}
-            >
-              <RoleIcon 
-                className="w-5 h-5"
-                style={{ color: `hsl(var(--${getRoleColor()}))` }}
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="font-medium truncate">{profile.full_name}</div>
-              <div className="text-sm text-muted-foreground capitalize">{profile.role}</div>
-            </div>
-          </div>
-          <Button 
-            variant="ghost" 
-            className="w-full justify-start text-muted-foreground hover:text-destructive"
-            onClick={handleSignOut}
-          >
-            <LogOut className="w-5 h-5 mr-2" />
-            Sign Out
-          </Button>
-        </div>
-      </aside>
-      
+    <Box className="min-h-screen bg-background">
+      {/* Desktop Sidebar */}
+      <Drawer
+        variant="permanent"
+        sx={{
+          display: { xs: 'none', lg: 'block' },
+          '& .MuiDrawer-paper': { width: DRAWER_WIDTH, boxSizing: 'border-box' },
+        }}
+      >
+        {drawer}
+      </Drawer>
+
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-card border-b border-border px-4 flex items-center justify-between z-50">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-hero flex items-center justify-center">
-            <Rocket className="w-4 h-4 text-primary-foreground" />
-          </div>
-          <span className="text-lg font-bold">StartupHub</span>
-        </Link>
-        <Button variant="ghost" size="icon" onClick={handleSignOut}>
-          <LogOut className="w-5 h-5" />
-        </Button>
-      </header>
-      
+      <AppBar
+        position="fixed"
+        sx={{
+          display: { lg: 'none' },
+          bgcolor: 'background.paper',
+        }}
+      >
+        <Toolbar>
+          <Box component={Link} to="/" className="flex items-center gap-2 no-underline text-inherit">
+            <Box className="w-8 h-8 rounded-lg bg-gradient-hero flex items-center justify-center">
+              <Rocket className="w-4 h-4 text-white" />
+            </Box>
+            <Typography variant="h6" className="font-bold text-foreground">
+              StartupHub
+            </Typography>
+          </Box>
+          <Box className="flex-grow" />
+          <IconButton onClick={handleSignOut}>
+            <LogOut className="w-5 h-5" />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+
       {/* Main Content */}
-      <main className="lg:ml-64 pt-16 lg:pt-0 p-6 lg:p-10">
+      <Box
+        component="main"
+        sx={{
+          ml: { lg: `${DRAWER_WIDTH}px` },
+          pt: { xs: '64px', lg: 0 },
+          p: { xs: 3, lg: 5 },
+        }}
+      >
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold mb-1">
+        <Stack
+          direction={{ xs: 'column', sm: 'row' }}
+          alignItems={{ sm: 'center' }}
+          justifyContent="space-between"
+          spacing={2}
+          className="mb-8"
+        >
+          <Box>
+            <Typography variant="h4" className="font-bold mb-1">
               Welcome back, {profile.full_name.split(' ')[0]}!
-            </h1>
-            <p className="text-muted-foreground">
+            </Typography>
+            <Typography variant="body1" className="text-muted-foreground">
               Here's what's happening in the ecosystem today.
-            </p>
-          </div>
+            </Typography>
+          </Box>
           {profile.role === 'founder' && (
-            <Button variant="hero">
-              <Plus className="w-5 h-5" />
+            <Button variant="contained" startIcon={<Plus className="w-5 h-5" />}>
               Add Startup
             </Button>
           )}
-        </div>
-        
+        </Stack>
+
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: 'Total Startups', value: startups.length, icon: Rocket },
-            { label: 'Looking for Team', value: startups.filter(s => s.looking_for_team).length, icon: Users },
-            { label: 'Seeking Funding', value: startups.filter(s => s.looking_for_funding).length, icon: TrendingUp },
-            { label: 'Need Mentorship', value: startups.filter(s => s.looking_for_mentorship).length, icon: GraduationCap },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-card rounded-xl border border-border p-5 shadow-sm">
-              <stat.icon className="w-5 h-5 text-primary mb-3" />
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <div className="text-sm text-muted-foreground">{stat.label}</div>
-            </div>
+        <Grid container spacing={2} className="mb-8">
+          {stats.map((stat) => (
+            <Grid size={{ xs: 6, lg: 3 }} key={stat.label}>
+              <Paper elevation={0} className="p-5 rounded-xl border border-border">
+                <stat.icon className="w-5 h-5 text-primary mb-3" />
+                <Typography variant="h4" className="font-bold">
+                  {stat.value}
+                </Typography>
+                <Typography variant="body2" className="text-muted-foreground">
+                  {stat.label}
+                </Typography>
+              </Paper>
+            </Grid>
           ))}
-        </div>
-        
+        </Grid>
+
         {/* Content */}
-        <div className="bg-card rounded-xl border border-border shadow-sm">
-          <div className="p-6 border-b border-border">
-            <h2 className="text-lg font-semibold">{getDashboardTitle()}</h2>
-          </div>
-          
+        <Paper elevation={0} className="rounded-xl border border-border">
+          <Box className="p-6 border-b border-border">
+            <Typography variant="h6" className="font-semibold">
+              {getDashboardTitle()}
+            </Typography>
+          </Box>
+
           {loadingStartups ? (
-            <div className="p-12 text-center">
-              <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
-            </div>
+            <Box className="p-12 text-center">
+              <CircularProgress />
+            </Box>
           ) : startups.length === 0 ? (
-            <div className="p-12 text-center">
-              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mx-auto mb-4">
+            <Box className="p-12 text-center">
+              <Box className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mx-auto mb-4">
                 <Briefcase className="w-8 h-8 text-muted-foreground" />
-              </div>
-              <h3 className="text-lg font-medium mb-2">No startups yet</h3>
-              <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
-                {profile.role === 'founder' 
+              </Box>
+              <Typography variant="h6" className="font-medium mb-2">
+                No startups yet
+              </Typography>
+              <Typography variant="body2" className="text-muted-foreground mb-6 max-w-sm mx-auto">
+                {profile.role === 'founder'
                   ? 'Create your first startup to get started and connect with investors and mentors.'
                   : 'Check back later for new opportunities in the ecosystem.'}
-              </p>
+              </Typography>
               {profile.role === 'founder' && (
-                <Button variant="hero">
-                  <Plus className="w-5 h-5" />
+                <Button variant="contained" startIcon={<Plus className="w-5 h-5" />}>
                   Create Startup
                 </Button>
               )}
-            </div>
+            </Box>
           ) : (
-            <div className="divide-y divide-border">
-              {startups.map((startup) => (
-                <div key={startup.id} className="p-6 hover:bg-secondary/50 transition-colors">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-lg mb-1">{startup.name}</h3>
+            <Box>
+              {startups.map((startup, index) => (
+                <Box
+                  key={startup.id}
+                  className={`p-6 hover:bg-secondary/50 transition-colors ${
+                    index !== startups.length - 1 ? 'border-b border-border' : ''
+                  }`}
+                >
+                  <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={2}>
+                    <Box className="flex-1 min-w-0">
+                      <Typography variant="h6" className="font-semibold mb-1">
+                        {startup.name}
+                      </Typography>
                       {startup.description && (
-                        <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
+                        <Typography
+                          variant="body2"
+                          className="text-muted-foreground mb-3 line-clamp-2"
+                        >
                           {startup.description}
-                        </p>
+                        </Typography>
                       )}
-                      <div className="flex flex-wrap gap-2">
+                      <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                         {startup.industry && (
-                          <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-secondary text-secondary-foreground">
-                            {startup.industry}
-                          </span>
+                          <Chip label={startup.industry} size="small" variant="outlined" />
                         )}
                         {startup.stage && (
-                          <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary">
-                            {startup.stage}
-                          </span>
+                          <Chip
+                            label={startup.stage}
+                            size="small"
+                            color="primary"
+                            variant="outlined"
+                          />
                         )}
                         {startup.looking_for_team && (
-                          <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-developer/15 text-developer">
-                            Hiring
-                          </span>
+                          <Chip
+                            label="Hiring"
+                            size="small"
+                            sx={{
+                              backgroundColor: `${roleColors.developer}20`,
+                              color: roleColors.developer,
+                            }}
+                          />
                         )}
                         {startup.looking_for_funding && (
-                          <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-investor/15 text-investor">
-                            Seeking Funding
-                          </span>
+                          <Chip
+                            label="Seeking Funding"
+                            size="small"
+                            sx={{
+                              backgroundColor: `${roleColors.investor}20`,
+                              color: roleColors.investor,
+                            }}
+                          />
                         )}
                         {startup.looking_for_mentorship && (
-                          <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-mentor/15 text-mentor">
-                            Needs Mentorship
-                          </span>
+                          <Chip
+                            label="Needs Mentorship"
+                            size="small"
+                            sx={{
+                              backgroundColor: `${roleColors.mentor}20`,
+                              color: roleColors.mentor,
+                            }}
+                          />
                         )}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="text-right">
-                        <div className="text-sm font-medium">Rating</div>
-                        <div className="text-2xl font-bold text-primary">{startup.rating.toFixed(1)}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                      </Stack>
+                    </Box>
+                    <Box className="text-right">
+                      <Typography variant="body2" className="font-medium">
+                        Rating
+                      </Typography>
+                      <Typography variant="h5" className="font-bold text-primary">
+                        {startup.rating.toFixed(1)}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                </Box>
               ))}
-            </div>
+            </Box>
           )}
-        </div>
-      </main>
-    </div>
+        </Paper>
+      </Box>
+    </Box>
   );
 }

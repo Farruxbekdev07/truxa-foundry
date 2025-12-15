@@ -1,11 +1,20 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Paper,
+  Stack,
+  Alert,
+  CircularProgress,
+  InputAdornment,
+  ToggleButtonGroup,
+  ToggleButton,
+} from '@mui/material';
 import { useAuth } from '@/lib/auth';
-import { Rocket, Mail, Lock, User, ArrowLeft, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Rocket, Mail, Lock, User, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 
@@ -43,41 +52,42 @@ export default function Auth() {
 
   const validate = () => {
     const newErrors: typeof errors = {};
-    
+
     const emailResult = emailSchema.safeParse(email);
     if (!emailResult.success) {
       newErrors.email = emailResult.error.errors[0].message;
     }
-    
+
     const passwordResult = passwordSchema.safeParse(password);
     if (!passwordResult.success) {
       newErrors.password = passwordResult.error.errors[0].message;
     }
-    
+
     if (!isLogin && !fullName.trim()) {
       newErrors.fullName = 'Full name is required';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validate()) return;
-    
+
     setLoading(true);
-    
+
     try {
       if (isLogin) {
         const { error } = await signIn(email, password);
         if (error) {
           toast({
             title: 'Sign in failed',
-            description: error.message === 'Invalid login credentials' 
-              ? 'Invalid email or password. Please try again.'
-              : error.message,
+            description:
+              error.message === 'Invalid login credentials'
+                ? 'Invalid email or password. Please try again.'
+                : error.message,
             variant: 'destructive',
           });
         } else {
@@ -101,7 +111,7 @@ export default function Auth() {
         } else {
           toast({
             title: 'Account created!',
-            description: 'Welcome to StartupHub. Let\'s get started!',
+            description: "Welcome to StartupHub. Let's get started!",
           });
           navigate('/dashboard');
         }
@@ -113,162 +123,174 @@ export default function Auth() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-subtle">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
+      <Box className="min-h-screen flex items-center justify-center bg-gradient-subtle">
+        <CircularProgress />
+      </Box>
     );
   }
 
   return (
-    <div className="min-h-screen flex bg-gradient-subtle">
+    <Box className="min-h-screen flex bg-gradient-subtle">
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-hero p-12 flex-col justify-between relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent)]" />
-        
-        <div className="relative z-10">
-          <Link to="/" className="flex items-center gap-2 mb-12">
-            <div className="w-10 h-10 rounded-xl bg-primary-foreground/20 flex items-center justify-center backdrop-blur-sm">
-              <Rocket className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <span className="text-2xl font-bold text-primary-foreground">StartupHub</span>
-          </Link>
-          
-          <h1 className="text-4xl lg:text-5xl font-bold text-primary-foreground leading-tight mb-6">
+      <Box className="hidden lg:flex lg:w-1/2 bg-gradient-hero p-12 flex-col justify-between relative overflow-hidden">
+        <Box className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent)]" />
+
+        <Box className="relative z-10">
+          <Box component={Link} to="/" className="flex items-center gap-2 mb-12 no-underline">
+            <Box className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
+              <Rocket className="w-6 h-6 text-white" />
+            </Box>
+            <Typography variant="h5" className="font-bold text-white">
+              StartupHub
+            </Typography>
+          </Box>
+
+          <Typography variant="h3" className="font-bold text-white leading-tight mb-6">
             {isLogin ? 'Welcome back!' : 'Join the ecosystem'}
-          </h1>
-          <p className="text-lg text-primary-foreground/80 max-w-md">
-            {isLogin 
+          </Typography>
+          <Typography variant="body1" className="text-white/80 max-w-md">
+            {isLogin
               ? 'Sign in to access your dashboard and connect with the startup community.'
               : 'Create your account and start connecting with founders, investors, mentors, and developers.'}
-          </p>
-        </div>
-        
-        <div className="relative z-10">
-          <p className="text-sm text-primary-foreground/60">
+          </Typography>
+        </Box>
+
+        <Box className="relative z-10">
+          <Typography variant="body2" className="text-white/60">
             © {new Date().getFullYear()} StartupHub. All rights reserved.
-          </p>
-        </div>
-      </div>
-      
+          </Typography>
+        </Box>
+      </Box>
+
       {/* Right Panel - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          {/* Mobile Logo */}
-          <div className="lg:hidden mb-8">
-            <Link to="/" className="flex items-center gap-2">
-              <ArrowLeft className="w-5 h-5 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Back to home</span>
-            </Link>
-          </div>
-          
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-2">
+      <Box className="w-full lg:w-1/2 flex items-center justify-center p-8">
+        <Box className="w-full max-w-md">
+          {/* Mobile Back Link */}
+          <Box className="lg:hidden mb-8">
+            <Button
+              component={Link}
+              to="/"
+              startIcon={<ArrowLeft className="w-5 h-5" />}
+              color="inherit"
+              className="text-muted-foreground"
+            >
+              Back to home
+            </Button>
+          </Box>
+
+          <Box className="mb-8">
+            <Typography variant="h4" className="font-bold mb-2">
               {isLogin ? 'Sign in to your account' : 'Create your account'}
-            </h2>
-            <p className="text-muted-foreground">
+            </Typography>
+            <Typography variant="body2" className="text-muted-foreground">
               {isLogin ? "Don't have an account? " : 'Already have an account? '}
-              <button
-                type="button"
+              <Button
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-primary font-medium hover:underline"
+                className="text-primary font-medium p-0 min-w-0"
+                sx={{ textTransform: 'none' }}
               >
                 {isLogin ? 'Sign up' : 'Sign in'}
-              </button>
-            </p>
-          </div>
-          
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
-                    id="fullName"
-                    type="text"
-                    placeholder="John Doe"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="pl-10 h-12"
-                  />
-                </div>
-                {errors.fullName && <p className="text-sm text-destructive">{errors.fullName}</p>}
-              </div>
-            )}
-            
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 h-12"
+              </Button>
+            </Typography>
+          </Box>
+
+          <form onSubmit={handleSubmit}>
+            <Stack spacing={3}>
+              {!isLogin && (
+                <TextField
+                  label="Full Name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  error={!!errors.fullName}
+                  helperText={errors.fullName}
+                  fullWidth
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <User className="w-5 h-5 text-muted-foreground" />
+                      </InputAdornment>
+                    ),
+                  }}
                 />
-              </div>
-              {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 h-12"
-                />
-              </div>
-              {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
-            </div>
-            
-            {!isLogin && (
-              <div className="space-y-3">
-                <Label>I am a...</Label>
-                <div className="grid grid-cols-2 gap-3">
-                  {roles.map((r) => (
-                    <button
-                      key={r.value}
-                      type="button"
-                      onClick={() => setRole(r.value)}
-                      className={`p-4 rounded-xl border-2 text-left transition-all ${
-                        role === r.value
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border hover:border-primary/50'
-                      }`}
-                    >
-                      <div className="font-medium text-sm">{r.label}</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">{r.description}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            <Button
-              type="submit"
-              variant="hero"
-              size="lg"
-              className="w-full"
-              disabled={loading}
-            >
-              {loading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : isLogin ? (
-                'Sign In'
-              ) : (
-                'Create Account'
               )}
-            </Button>
+
+              <TextField
+                label="Email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                error={!!errors.email}
+                helperText={errors.email}
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Mail className="w-5 h-5 text-muted-foreground" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <TextField
+                label="Password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={!!errors.password}
+                helperText={errors.password}
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock className="w-5 h-5 text-muted-foreground" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              {!isLogin && (
+                <Box>
+                  <Typography variant="body2" className="font-medium mb-2">
+                    I am a...
+                  </Typography>
+                  <Box className="grid grid-cols-2 gap-3">
+                    {roles.map((r) => (
+                      <Paper
+                        key={r.value}
+                        elevation={0}
+                        onClick={() => setRole(r.value)}
+                        className={`p-4 rounded-xl cursor-pointer transition-all border-2 ${
+                          role === r.value
+                            ? 'border-primary bg-primary/5'
+                            : 'border-border hover:border-primary/50'
+                        }`}
+                      >
+                        <Typography variant="body2" className="font-medium">
+                          {r.label}
+                        </Typography>
+                        <Typography variant="caption" className="text-muted-foreground">
+                          {r.description}
+                        </Typography>
+                      </Paper>
+                    ))}
+                  </Box>
+                </Box>
+              )}
+
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                fullWidth
+                disabled={loading}
+                className="h-12"
+              >
+                {loading ? <CircularProgress size={24} /> : isLogin ? 'Sign In' : 'Create Account'}
+              </Button>
+            </Stack>
           </form>
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 }
