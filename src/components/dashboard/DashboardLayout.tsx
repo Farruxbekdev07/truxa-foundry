@@ -1,5 +1,5 @@
-import { useState, ReactNode } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useState, ReactNode } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Box,
   Button,
@@ -18,22 +18,21 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-} from '@mui/material';
-import { useAuth } from '@/lib/auth';
+} from "@mui/material";
+import { useAuth } from "@/lib/auth";
 import {
   Rocket,
   TrendingUp,
   GraduationCap,
   Code,
   LogOut,
-  Users,
   LayoutDashboard,
   Briefcase,
   User,
   Menu,
   X,
-} from 'lucide-react';
-import { roleColors } from '@/theme/muiTheme';
+} from "lucide-react";
+import { roleColors } from "@/theme/muiTheme";
 
 const DRAWER_WIDTH = 256;
 
@@ -42,7 +41,7 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const { user, profile, signOut } = useAuth();
+  const { profile, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -54,24 +53,24 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/');
+    navigate("/");
   };
 
   const navItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
-    { icon: Briefcase, label: 'Startups', href: '/startups' },
-    { icon: User, label: 'Profile', href: '/profile' },
+    { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+    { icon: Briefcase, label: "Startups", href: "/startups" },
+    { icon: User, label: "Profile", href: "/profile" },
   ];
 
   const getRoleIcon = () => {
     switch (profile?.role) {
-      case 'founder':
+      case "founder":
         return Rocket;
-      case 'investor':
+      case "investor":
         return TrendingUp;
-      case 'mentor':
+      case "mentor":
         return GraduationCap;
-      case 'developer':
+      case "developer":
         return Code;
       default:
         return User;
@@ -80,14 +79,20 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const getRoleColor = () => {
     if (!profile?.role) return roleColors.founder;
-    return roleColors[profile.role as keyof typeof roleColors] || roleColors.founder;
+    return (
+      roleColors[profile.role as keyof typeof roleColors] || roleColors.founder
+    );
   };
 
   const RoleIcon = getRoleIcon();
 
   const drawer = (
     <Box className="h-full flex flex-col p-6">
-      <Box component={Link} to="/" className="flex items-center gap-2 mb-8 no-underline text-inherit">
+      <Box
+        component={Link}
+        to="/"
+        className="flex items-center gap-2 mb-8 no-underline text-inherit"
+      >
         <Box className="w-9 h-9 rounded-xl bg-gradient-hero flex items-center justify-center">
           <Rocket className="w-5 h-5 text-white" />
         </Box>
@@ -128,7 +133,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <Typography variant="body2" className="font-medium truncate">
               {profile.full_name}
             </Typography>
-            <Typography variant="caption" className="text-muted-foreground capitalize">
+            <Typography
+              variant="caption"
+              className="text-muted-foreground capitalize"
+            >
               {profile.role}
             </Typography>
           </Box>
@@ -152,8 +160,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <Drawer
         variant="permanent"
         sx={{
-          display: { xs: 'none', lg: 'block' },
-          '& .MuiDrawer-paper': { width: DRAWER_WIDTH, boxSizing: 'border-box' },
+          display: { xs: "none", lg: "block" },
+          "& .MuiDrawer-paper": {
+            width: DRAWER_WIDTH,
+            boxSizing: "border-box",
+          },
         }}
       >
         {drawer}
@@ -166,8 +177,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         onClose={handleDrawerToggle}
         ModalProps={{ keepMounted: true }}
         sx={{
-          display: { xs: 'block', lg: 'none' },
-          '& .MuiDrawer-paper': { width: DRAWER_WIDTH, boxSizing: 'border-box' },
+          display: { xs: "block", lg: "none" },
+          "& .MuiDrawer-paper": {
+            width: DRAWER_WIDTH,
+            boxSizing: "border-box",
+          },
         }}
       >
         {drawer}
@@ -177,15 +191,27 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <AppBar
         position="fixed"
         sx={{
-          display: { lg: 'none' },
-          bgcolor: 'background.paper',
+          display: { lg: "none" },
+          bgcolor: "background.paper",
         }}
       >
         <Toolbar>
-          <IconButton edge="start" onClick={handleDrawerToggle} className="mr-2">
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          <IconButton
+            edge="start"
+            onClick={handleDrawerToggle}
+            className="mr-2"
+          >
+            {mobileOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
           </IconButton>
-          <Box component={Link} to="/" className="flex items-center gap-2 no-underline text-inherit">
+          <Box
+            component={Link}
+            to="/"
+            className="flex items-center gap-2 no-underline text-inherit"
+          >
             <Box className="w-8 h-8 rounded-lg bg-gradient-hero flex items-center justify-center">
               <Rocket className="w-4 h-4 text-white" />
             </Box>
@@ -201,18 +227,22 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         component="main"
         sx={{
           ml: { lg: `${DRAWER_WIDTH}px` },
-          pt: { xs: '64px', lg: 0 },
+          pt: { xs: "64px", lg: 0 },
         }}
       >
         {children}
       </Box>
 
       {/* Logout Confirmation Dialog */}
-      <Dialog open={logoutDialogOpen} onClose={() => setLogoutDialogOpen(false)}>
+      <Dialog
+        open={logoutDialogOpen}
+        onClose={() => setLogoutDialogOpen(false)}
+      >
         <DialogTitle>Confirm Logout</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to logout? You will need to sign in again to access your account.
+            Are you sure you want to logout? You will need to sign in again to
+            access your account.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

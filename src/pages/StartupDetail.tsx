@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
   Button,
@@ -10,24 +10,22 @@ import {
   Stack,
   Avatar,
   Divider,
-} from '@mui/material';
-import { useAuth } from '@/lib/auth';
-import { supabase } from '@/integrations/supabase/client';
+} from "@mui/material";
+import { useAuth } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
 import {
   ArrowLeft,
-  Rocket,
   TrendingUp,
   GraduationCap,
-  Code,
   Users,
   Edit,
   Trash2,
   Star,
-} from 'lucide-react';
-import { roleColors } from '@/theme/muiTheme';
-import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
-import { EditStartupDialog } from '@/components/dashboard/EditStartupDialog';
-import { DeleteStartupDialog } from '@/components/dashboard/DeleteStartupDialog';
+} from "lucide-react";
+import { roleColors } from "@/theme/muiTheme";
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
+import { EditStartupDialog } from "@/components/dashboard/EditStartupDialog";
+import { DeleteStartupDialog } from "@/components/dashboard/DeleteStartupDialog";
 
 interface Startup {
   id: string;
@@ -59,7 +57,7 @@ export default function StartupDetail() {
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate('/auth?mode=login');
+      navigate("/auth?mode=login");
     }
   }, [user, loading, navigate]);
 
@@ -72,9 +70,9 @@ export default function StartupDetail() {
   const fetchStartup = async () => {
     setLoadingStartup(true);
     const { data } = await supabase
-      .from('startups')
-      .select('*, profiles(full_name, avatar_url, role)')
-      .eq('id', id)
+      .from("startups")
+      .select("*, profiles(full_name, avatar_url, role)")
+      .eq("id", id)
       .single();
 
     setStartup(data as Startup);
@@ -100,7 +98,10 @@ export default function StartupDetail() {
           <Typography variant="h5" className="mb-4">
             Startup not found
           </Typography>
-          <Button onClick={() => navigate('/startups')} startIcon={<ArrowLeft className="w-4 h-4" />}>
+          <Button
+            onClick={() => navigate("/startups")}
+            startIcon={<ArrowLeft className="w-4 h-4" />}
+          >
             Back to Startups
           </Button>
         </Box>
@@ -113,20 +114,23 @@ export default function StartupDetail() {
       <Box className="p-4 md:p-6 lg:p-8 max-w-4xl mx-auto">
         <Button
           startIcon={<ArrowLeft className="w-4 h-4" />}
-          onClick={() => navigate('/startups')}
+          onClick={() => navigate("/startups")}
           className="mb-6"
           color="inherit"
         >
           Back to Startups
         </Button>
 
-        <Paper elevation={0} className="rounded-xl border border-border overflow-hidden">
+        <Paper
+          elevation={0}
+          className="rounded-xl border border-border overflow-hidden"
+        >
           {/* Header */}
           <Box className="p-6 md:p-8 bg-gradient-to-br from-primary/5 to-primary/10">
             <Stack
-              direction={{ xs: 'column', sm: 'row' }}
+              direction={{ xs: "column", sm: "row" }}
               justifyContent="space-between"
-              alignItems={{ sm: 'flex-start' }}
+              alignItems={{ sm: "flex-start" }}
               spacing={3}
             >
               <Box>
@@ -134,21 +138,40 @@ export default function StartupDetail() {
                   {startup.name}
                 </Typography>
                 <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  {startup.industry && <Chip label={startup.industry} size="small" variant="outlined" />}
+                  {startup.industry && (
+                    <Chip
+                      label={startup.industry}
+                      size="small"
+                      variant="outlined"
+                    />
+                  )}
                   {startup.stage && (
-                    <Chip label={startup.stage} size="small" color="primary" variant="outlined" />
+                    <Chip
+                      label={startup.stage}
+                      size="small"
+                      color="primary"
+                      variant="outlined"
+                    />
                   )}
                 </Stack>
               </Box>
               <Stack direction="row" spacing={1}>
                 <Box className="text-center p-4 rounded-xl bg-background/80">
-                  <Stack direction="row" alignItems="center" justifyContent="center" spacing={1}>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="center"
+                    spacing={1}
+                  >
                     <Star className="w-5 h-5 text-yellow-500" />
                     <Typography variant="h4" className="font-bold">
-                      {startup.rating?.toFixed(1) || '0.0'}
+                      {startup.rating?.toFixed(1) || "0.0"}
                     </Typography>
                   </Stack>
-                  <Typography variant="caption" className="text-muted-foreground">
+                  <Typography
+                    variant="caption"
+                    className="text-muted-foreground"
+                  >
                     Rating
                   </Typography>
                 </Box>
@@ -160,7 +183,10 @@ export default function StartupDetail() {
             {/* Founder Info */}
             {startup.profiles && (
               <Box className="mb-6">
-                <Typography variant="body2" className="text-muted-foreground mb-2">
+                <Typography
+                  variant="body2"
+                  className="text-muted-foreground mb-2"
+                >
                   Founded by
                 </Typography>
                 <Stack direction="row" alignItems="center" spacing={2}>
@@ -174,7 +200,10 @@ export default function StartupDetail() {
                     <Typography variant="body1" className="font-semibold">
                       {startup.profiles.full_name}
                     </Typography>
-                    <Typography variant="caption" className="text-muted-foreground capitalize">
+                    <Typography
+                      variant="caption"
+                      className="text-muted-foreground capitalize"
+                    >
                       {startup.profiles.role}
                     </Typography>
                   </Box>
@@ -187,7 +216,10 @@ export default function StartupDetail() {
             {/* Description */}
             {startup.description && (
               <Box className="mb-6">
-                <Typography variant="body2" className="text-muted-foreground mb-2">
+                <Typography
+                  variant="body2"
+                  className="text-muted-foreground mb-2"
+                >
                   About
                 </Typography>
                 <Typography variant="body1">{startup.description}</Typography>
@@ -196,7 +228,10 @@ export default function StartupDetail() {
 
             {/* Looking For */}
             <Box className="mb-6">
-              <Typography variant="body2" className="text-muted-foreground mb-3">
+              <Typography
+                variant="body2"
+                className="text-muted-foreground mb-3"
+              >
                 Currently Looking For
               </Typography>
               <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
@@ -233,7 +268,10 @@ export default function StartupDetail() {
                 {!startup.looking_for_team &&
                   !startup.looking_for_funding &&
                   !startup.looking_for_mentorship && (
-                    <Typography variant="body2" className="text-muted-foreground">
+                    <Typography
+                      variant="body2"
+                      className="text-muted-foreground"
+                    >
                       Nothing at the moment
                     </Typography>
                   )}
@@ -283,7 +321,7 @@ export default function StartupDetail() {
             onClose={() => setDeleteDialogOpen(false)}
             startup={startup}
             onSuccess={() => {
-              navigate('/startups');
+              navigate("/startups");
             }}
           />
         </>

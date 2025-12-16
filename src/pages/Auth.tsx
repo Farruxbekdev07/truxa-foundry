@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import {
   Box,
   Button,
@@ -7,27 +7,42 @@ import {
   Typography,
   Paper,
   Stack,
-  Alert,
   CircularProgress,
   InputAdornment,
-  ToggleButtonGroup,
-  ToggleButton,
-} from '@mui/material';
-import { useAuth } from '@/lib/auth';
-import { Rocket, Mail, Lock, User, ArrowLeft } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { z } from 'zod';
+} from "@mui/material";
+import { useAuth } from "@/lib/auth";
+import { Rocket, Mail, Lock, User, ArrowLeft } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
 
-const emailSchema = z.string().email('Please enter a valid email address');
-const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
+const emailSchema = z.string().email("Please enter a valid email address");
+const passwordSchema = z
+  .string()
+  .min(6, "Password must be at least 6 characters");
 
-type Role = 'founder' | 'investor' | 'mentor' | 'developer';
+type Role = "founder" | "investor" | "mentor" | "developer";
 
 const roles: { value: Role; label: string; description: string }[] = [
-  { value: 'founder', label: 'Founder', description: 'Build and showcase your startup' },
-  { value: 'investor', label: 'Investor', description: 'Discover and invest in startups' },
-  { value: 'mentor', label: 'Mentor', description: 'Guide entrepreneurs to success' },
-  { value: 'developer', label: 'Developer', description: 'Join innovative startup teams' },
+  {
+    value: "founder",
+    label: "Founder",
+    description: "Build and showcase your startup",
+  },
+  {
+    value: "investor",
+    label: "Investor",
+    description: "Discover and invest in startups",
+  },
+  {
+    value: "mentor",
+    label: "Mentor",
+    description: "Guide entrepreneurs to success",
+  },
+  {
+    value: "developer",
+    label: "Developer",
+    description: "Join innovative startup teams",
+  },
 ];
 
 export default function Auth() {
@@ -36,17 +51,23 @@ export default function Auth() {
   const { signUp, signIn, user, loading: authLoading } = useAuth();
   const { toast } = useToast();
 
-  const [isLogin, setIsLogin] = useState(searchParams.get('mode') === 'login');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [role, setRole] = useState<Role>((searchParams.get('role') as Role) || 'founder');
+  const [isLogin, setIsLogin] = useState(searchParams.get("mode") === "login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [role, setRole] = useState<Role>(
+    (searchParams.get("role") as Role) || "founder"
+  );
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; fullName?: string }>({});
+  const [errors, setErrors] = useState<{
+    email?: string;
+    password?: string;
+    fullName?: string;
+  }>({});
 
   useEffect(() => {
     if (user && !authLoading) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     }
   }, [user, authLoading, navigate]);
 
@@ -64,7 +85,7 @@ export default function Auth() {
     }
 
     if (!isLogin && !fullName.trim()) {
-      newErrors.fullName = 'Full name is required';
+      newErrors.fullName = "Full name is required";
     }
 
     setErrors(newErrors);
@@ -83,37 +104,37 @@ export default function Auth() {
         const { error } = await signIn(email, password);
         if (error) {
           toast({
-            title: 'Sign in failed',
+            title: "Sign in failed",
             description:
-              error.message === 'Invalid login credentials'
-                ? 'Invalid email or password. Please try again.'
+              error.message === "Invalid login credentials"
+                ? "Invalid email or password. Please try again."
                 : error.message,
-            variant: 'destructive',
+            variant: "destructive",
           });
         } else {
           toast({
-            title: 'Welcome back!',
-            description: 'You have been signed in successfully.',
+            title: "Welcome back!",
+            description: "You have been signed in successfully.",
           });
-          navigate('/dashboard');
+          navigate("/dashboard");
         }
       } else {
         const { error } = await signUp(email, password, fullName, role);
         if (error) {
-          const errorMessage = error.message.includes('already registered')
-            ? 'This email is already registered. Please sign in instead.'
+          const errorMessage = error.message.includes("already registered")
+            ? "This email is already registered. Please sign in instead."
             : error.message;
           toast({
-            title: 'Sign up failed',
+            title: "Sign up failed",
             description: errorMessage,
-            variant: 'destructive',
+            variant: "destructive",
           });
         } else {
           toast({
-            title: 'Account created!',
+            title: "Account created!",
             description: "Welcome to StartupHub. Let's get started!",
           });
-          navigate('/dashboard');
+          navigate("/dashboard");
         }
       }
     } finally {
@@ -136,7 +157,11 @@ export default function Auth() {
         <Box className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent)]" />
 
         <Box className="relative z-10">
-          <Box component={Link} to="/" className="flex items-center gap-2 mb-12 no-underline">
+          <Box
+            component={Link}
+            to="/"
+            className="flex items-center gap-2 mb-12 no-underline"
+          >
             <Box className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
               <Rocket className="w-6 h-6 text-white" />
             </Box>
@@ -145,13 +170,16 @@ export default function Auth() {
             </Typography>
           </Box>
 
-          <Typography variant="h3" className="font-bold text-white leading-tight mb-6">
-            {isLogin ? 'Welcome back!' : 'Join the ecosystem'}
+          <Typography
+            variant="h3"
+            className="font-bold text-white leading-tight mb-6"
+          >
+            {isLogin ? "Welcome back!" : "Join the ecosystem"}
           </Typography>
           <Typography variant="body1" className="text-white/80 max-w-md">
             {isLogin
-              ? 'Sign in to access your dashboard and connect with the startup community.'
-              : 'Create your account and start connecting with founders, investors, mentors, and developers.'}
+              ? "Sign in to access your dashboard and connect with the startup community."
+              : "Create your account and start connecting with founders, investors, mentors, and developers."}
           </Typography>
         </Box>
 
@@ -180,16 +208,18 @@ export default function Auth() {
 
           <Box className="mb-8">
             <Typography variant="h4" className="font-bold mb-2">
-              {isLogin ? 'Sign in to your account' : 'Create your account'}
+              {isLogin ? "Sign in to your account" : "Create your account"}
             </Typography>
             <Typography variant="body2" className="text-muted-foreground">
-              {isLogin ? "Don't have an account? " : 'Already have an account? '}
+              {isLogin
+                ? "Don't have an account? "
+                : "Already have an account? "}
               <Button
                 onClick={() => setIsLogin(!isLogin)}
                 className="text-primary font-medium p-0 min-w-0"
-                sx={{ textTransform: 'none' }}
+                sx={{ textTransform: "none" }}
               >
-                {isLogin ? 'Sign up' : 'Sign in'}
+                {isLogin ? "Sign up" : "Sign in"}
               </Button>
             </Typography>
           </Box>
@@ -261,14 +291,17 @@ export default function Auth() {
                         onClick={() => setRole(r.value)}
                         className={`p-4 rounded-xl cursor-pointer transition-all border-2 ${
                           role === r.value
-                            ? 'border-primary bg-primary/5'
-                            : 'border-border hover:border-primary/50'
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:border-primary/50"
                         }`}
                       >
                         <Typography variant="body2" className="font-medium">
                           {r.label}
                         </Typography>
-                        <Typography variant="caption" className="text-muted-foreground">
+                        <Typography
+                          variant="caption"
+                          className="text-muted-foreground"
+                        >
                           {r.description}
                         </Typography>
                       </Paper>
@@ -285,7 +318,13 @@ export default function Auth() {
                 disabled={loading}
                 className="h-12"
               >
-                {loading ? <CircularProgress size={24} /> : isLogin ? 'Sign In' : 'Create Account'}
+                {loading ? (
+                  <CircularProgress size={24} />
+                ) : isLogin ? (
+                  "Sign In"
+                ) : (
+                  "Create Account"
+                )}
               </Button>
             </Stack>
           </form>
