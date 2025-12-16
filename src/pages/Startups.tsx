@@ -1,14 +1,20 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
   Typography,
   Paper,
-  Chip,
   CircularProgress,
-  Grid,
+  Chip,
   Stack,
+  TextField,
+  InputAdornment,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Grid,
 } from '@mui/material';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/integrations/supabase/client';
@@ -20,7 +26,8 @@ import {
   Plus,
   Users,
   Briefcase,
-  ArrowRight,
+  Search,
+  Eye,
 } from 'lucide-react';
 import { roleColors } from '@/theme/muiTheme';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
@@ -42,11 +49,14 @@ interface Startup {
   };
 }
 
-export default function Dashboard() {
+export default function Startups() {
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
   const [startups, setStartups] = useState<Startup[]>([]);
   const [loadingStartups, setLoadingStartups] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterIndustry, setFilterIndustry] = useState('');
+  const [filterStage, setFilterStage] = useState('');
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -75,9 +85,36 @@ export default function Dashboard() {
       query = query.eq('looking_for_funding', true);
     }
 
-    const { data } = await query.order('created_at', { ascending: false }).limit(5);
+    const { data } = await query.order('created_at', { ascending: false });
     setStartups((data as Startup[]) || []);
     setLoadingStartups(false);
+  };
+
+  const filteredStartups = startups.filter((startup) => {
+    const matchesSearch =
+      startup.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      startup.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesIndustry = !filterIndustry || startup.industry === filterIndustry;
+    const matchesStage = !filterStage || startup.stage === filterStage;
+    return matchesSearch && matchesIndustry && matchesStage;
+  });
+
+  const industries = [...new Set(startups.map((s) => s.industry).filter(Boolean))];
+  const stages = [...new Set(startups.map((s) => s.stage).filter(Boolean))];
+
+  const getTitle = () => {
+    switch (profile?.role) {
+      case 'founder':
+        return 'My Startups';
+      case 'investor':
+        return 'Investment Opportunities';
+      case 'mentor':
+        return 'Startups Seeking Mentorship';
+      case 'developer':
+        return 'Startups Hiring';
+      default:
+        return 'Startups';
+    }
   };
 
   if (loading) {
@@ -90,28 +127,6 @@ export default function Dashboard() {
 
   if (!user || !profile) return null;
 
-  const getDashboardTitle = () => {
-    switch (profile.role) {
-      case 'founder':
-        return 'Your Startups';
-      case 'investor':
-        return 'Investment Opportunities';
-      case 'mentor':
-        return 'Startups Seeking Guidance';
-      case 'developer':
-        return 'Startups Hiring';
-      default:
-        return 'Dashboard';
-    }
-  };
-
-  const stats = [
-    { label: 'Total Startups', value: startups.length, icon: Rocket },
-    { label: 'Looking for Team', value: startups.filter((s) => s.looking_for_team).length, icon: Users },
-    { label: 'Seeking Funding', value: startups.filter((s) => s.looking_for_funding).length, icon: TrendingUp },
-    { label: 'Need Mentorship', value: startups.filter((s) => s.looking_for_mentorship).length, icon: GraduationCap },
-  ];
-
   return (
     <DashboardLayout>
       <Box className="p-4 md:p-6 lg:p-8">
@@ -121,16 +136,11 @@ export default function Dashboard() {
           alignItems={{ sm: 'center' }}
           justifyContent="space-between"
           spacing={2}
-          className="mb-8"
+          className="mb-6"
         >
-          <Box>
-            <Typography variant="h4" className="font-bold mb-1">
-              Welcome back, {profile.full_name.split(' ')[0]}!
-            </Typography>
-            <Typography variant="body1" className="text-muted-foreground">
-              Here's what's happening in the ecosystem today.
-            </Typography>
-          </Box>
+          <Typography variant="h4" className="font-bold">
+            {getTitle()}
+          </Typography>
           {profile.role === 'founder' && (
             <Button
               variant="contained"
@@ -142,50 +152,74 @@ export default function Dashboard() {
           )}
         </Stack>
 
-        {/* Stats */}
-        <Grid container spacing={2} className="mb-8">
-          {stats.map((stat) => (
-            <Grid size={{ xs: 6, lg: 3 }} key={stat.label}>
-              <Paper elevation={0} className="p-5 rounded-xl border border-border">
-                <stat.icon className="w-5 h-5 text-primary mb-3" />
-                <Typography variant="h4" className="font-bold">
-                  {stat.value}
-                </Typography>
-                <Typography variant="body2" className="text-muted-foreground">
-                  {stat.label}
-                </Typography>
-              </Paper>
+        {/* Filters */}
+        <Paper elevation={0} className="rounded-xl border border-border p-4 mb-6">
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                fullWidth
+                placeholder="Search startups..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search className="w-5 h-5 text-muted-foreground" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
             </Grid>
-          ))}
-        </Grid>
+            <Grid size={{ xs: 6, md: 3 }}>
+              <FormControl fullWidth>
+                <InputLabel>Industry</InputLabel>
+                <Select
+                  value={filterIndustry}
+                  label="Industry"
+                  onChange={(e) => setFilterIndustry(e.target.value)}
+                >
+                  <MenuItem value="">All Industries</MenuItem>
+                  {industries.map((industry) => (
+                    <MenuItem key={industry} value={industry!}>
+                      {industry}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid size={{ xs: 6, md: 3 }}>
+              <FormControl fullWidth>
+                <InputLabel>Stage</InputLabel>
+                <Select
+                  value={filterStage}
+                  label="Stage"
+                  onChange={(e) => setFilterStage(e.target.value)}
+                >
+                  <MenuItem value="">All Stages</MenuItem>
+                  {stages.map((stage) => (
+                    <MenuItem key={stage} value={stage!}>
+                      {stage}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </Paper>
 
-        {/* Recent Startups */}
+        {/* Startups List */}
         <Paper elevation={0} className="rounded-xl border border-border">
-          <Box className="p-6 border-b border-border flex items-center justify-between">
-            <Typography variant="h6" className="font-semibold">
-              {getDashboardTitle()}
-            </Typography>
-            <Button
-              component={Link}
-              to="/startups"
-              endIcon={<ArrowRight className="w-4 h-4" />}
-              size="small"
-            >
-              View All
-            </Button>
-          </Box>
-
           {loadingStartups ? (
             <Box className="p-12 text-center">
               <CircularProgress />
             </Box>
-          ) : startups.length === 0 ? (
+          ) : filteredStartups.length === 0 ? (
             <Box className="p-12 text-center">
               <Box className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mx-auto mb-4">
                 <Briefcase className="w-8 h-8 text-muted-foreground" />
               </Box>
               <Typography variant="h6" className="font-medium mb-2">
-                No startups yet
+                No startups found
               </Typography>
               <Typography variant="body2" className="text-muted-foreground mb-6 max-w-sm mx-auto">
                 {profile.role === 'founder'
@@ -204,19 +238,26 @@ export default function Dashboard() {
             </Box>
           ) : (
             <Box>
-              {startups.map((startup, index) => (
+              {filteredStartups.map((startup, index) => (
                 <Box
                   key={startup.id}
                   className={`p-6 hover:bg-secondary/50 transition-colors cursor-pointer ${
-                    index !== startups.length - 1 ? 'border-b border-border' : ''
+                    index !== filteredStartups.length - 1 ? 'border-b border-border' : ''
                   }`}
                   onClick={() => navigate(`/startups/${startup.id}`)}
                 >
                   <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={2}>
                     <Box className="flex-1 min-w-0">
-                      <Typography variant="h6" className="font-semibold mb-1">
-                        {startup.name}
-                      </Typography>
+                      <Stack direction="row" alignItems="center" spacing={2} className="mb-2">
+                        <Typography variant="h6" className="font-semibold">
+                          {startup.name}
+                        </Typography>
+                        {startup.profiles?.full_name && profile.role !== 'founder' && (
+                          <Typography variant="caption" className="text-muted-foreground">
+                            by {startup.profiles.full_name}
+                          </Typography>
+                        )}
+                      </Stack>
                       {startup.description && (
                         <Typography variant="body2" className="text-muted-foreground mb-3 line-clamp-2">
                           {startup.description}
@@ -259,14 +300,19 @@ export default function Dashboard() {
                         )}
                       </Stack>
                     </Box>
-                    <Box className="text-right">
-                      <Typography variant="body2" className="font-medium">
-                        Rating
-                      </Typography>
-                      <Typography variant="h5" className="font-bold text-primary">
-                        {startup.rating?.toFixed(1) || '0.0'}
-                      </Typography>
-                    </Box>
+                    <Stack alignItems="flex-end" spacing={1}>
+                      <Box className="text-right">
+                        <Typography variant="body2" className="font-medium">
+                          Rating
+                        </Typography>
+                        <Typography variant="h5" className="font-bold text-primary">
+                          {startup.rating?.toFixed(1) || '0.0'}
+                        </Typography>
+                      </Box>
+                      <Button size="small" startIcon={<Eye className="w-4 h-4" />}>
+                        View
+                      </Button>
+                    </Stack>
                   </Stack>
                 </Box>
               ))}

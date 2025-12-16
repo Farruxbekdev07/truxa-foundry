@@ -7,6 +7,9 @@ import { AuthProvider } from "@/lib/auth";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import Startups from "./pages/Startups";
+import StartupDetail from "./pages/StartupDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +25,9 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/startups" element={<Startups />} />
+            <Route path="/startups/:id" element={<StartupDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

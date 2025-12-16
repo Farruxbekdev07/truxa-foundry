@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
@@ -12,8 +12,19 @@ import {
   ListItemText,
   Divider,
   Container,
+  Avatar,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
-import { Rocket, Menu, X } from 'lucide-react';
+import { Rocket, Menu as MenuIcon, X, LayoutDashboard, User, LogOut } from 'lucide-react';
+import { useAuth } from '@/lib/auth';
+import { roleColors } from '@/theme/muiTheme';
 
 const navLinks = [
   { label: 'Features', href: '/#features' },
@@ -21,10 +32,51 @@ const navLinks = [
 ];
 
 export function Navbar() {
+  const { user, profile, signOut } = useAuth();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogoutClick = () => {
+    handleMenuClose();
+    setLogoutDialogOpen(true);
+  };
+
+  const handleLogoutConfirm = async () => {
+    await signOut();
+    setLogoutDialogOpen(false);
+    navigate('/');
+  };
+
+  const handleLogoutCancel = () => {
+    setLogoutDialogOpen(false);
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const getRoleColor = () => {
+    if (!profile?.role) return roleColors.founder;
+    return roleColors[profile.role as keyof typeof roleColors] || roleColors.founder;
   };
 
   const drawer = (
@@ -43,24 +95,63 @@ export function Navbar() {
       </List>
       <Divider className="my-4" />
       <Box className="px-4 space-y-2">
-        <Button
-          component={Link}
-          to="/auth?mode=login"
-          variant="outlined"
-          fullWidth
-          onClick={handleDrawerToggle}
-        >
-          Sign In
-        </Button>
-        <Button
-          component={Link}
-          to="/auth"
-          variant="contained"
-          fullWidth
-          onClick={handleDrawerToggle}
-        >
-          Get Started
-        </Button>
+        {user && profile ? (
+          <>
+            <Button
+              component={Link}
+              to="/dashboard"
+              variant="outlined"
+              fullWidth
+              startIcon={<LayoutDashboard className="w-4 h-4" />}
+              onClick={handleDrawerToggle}
+            >
+              Dashboard
+            </Button>
+            <Button
+              component={Link}
+              to="/profile"
+              variant="outlined"
+              fullWidth
+              startIcon={<User className="w-4 h-4" />}
+              onClick={handleDrawerToggle}
+            >
+              Profile
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              fullWidth
+              startIcon={<LogOut className="w-4 h-4" />}
+              onClick={() => {
+                handleDrawerToggle();
+                setLogoutDialogOpen(true);
+              }}
+            >
+              Logout
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              component={Link}
+              to="/auth?mode=login"
+              variant="outlined"
+              fullWidth
+              onClick={handleDrawerToggle}
+            >
+              Sign In
+            </Button>
+            <Button
+              component={Link}
+              to="/auth"
+              variant="contained"
+              fullWidth
+              onClick={handleDrawerToggle}
+            >
+              Get Started
+            </Button>
+          </>
+        )}
       </Box>
     </Box>
   );
@@ -99,31 +190,86 @@ export function Navbar() {
 
             <Box className="flex-grow" />
 
-            {/* Desktop CTA */}
+            {/* Desktop CTA or Avatar */}
             <Box className="hidden md:flex items-center gap-3">
-              <Button
-                component={Link}
-                to="/auth?mode=login"
-                color="inherit"
-              >
-                Sign In
-              </Button>
-              <Button
-                component={Link}
-                to="/auth"
-                variant="contained"
-              >
-                Get Started
-              </Button>
+              {user && profile ? (
+                <>
+                  <IconButton onClick={handleAvatarClick} size="small">
+                    <Avatar
+                      src={profile.avatar_url || undefined}
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        bgcolor: getRoleColor(),
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {getInitials(profile.full_name)}
+                    </Avatar>
+                  </IconButton>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleMenuClose}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                    slotProps={{
+                      paper: {
+                        sx: {
+                          mt: 1,
+                          minWidth: 180,
+                          bgcolor: 'background.paper',
+                          border: '1px solid',
+                          borderColor: 'divider',
+                        },
+                      },
+                    }}
+                  >
+                    <MenuItem
+                      component={Link}
+                      to="/dashboard"
+                      onClick={handleMenuClose}
+                    >
+                      <ListItemIcon>
+                        <LayoutDashboard className="w-4 h-4" />
+                      </ListItemIcon>
+                      Dashboard
+                    </MenuItem>
+                    <MenuItem
+                      component={Link}
+                      to="/profile"
+                      onClick={handleMenuClose}
+                    >
+                      <ListItemIcon>
+                        <User className="w-4 h-4" />
+                      </ListItemIcon>
+                      Profile
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem onClick={handleLogoutClick} sx={{ color: 'error.main' }}>
+                      <ListItemIcon>
+                        <LogOut className="w-4 h-4 text-red-500" />
+                      </ListItemIcon>
+                      Logout
+                    </MenuItem>
+                  </Menu>
+                </>
+              ) : (
+                <>
+                  <Button component={Link} to="/auth?mode=login" color="inherit">
+                    Sign In
+                  </Button>
+                  <Button component={Link} to="/auth" variant="contained">
+                    Get Started
+                  </Button>
+                </>
+              )}
             </Box>
 
             {/* Mobile Menu Button */}
-            <IconButton
-              className="md:hidden"
-              onClick={handleDrawerToggle}
-              edge="end"
-            >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <IconButton className="md:hidden" onClick={handleDrawerToggle} edge="end">
+              {mobileOpen ? <X className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
             </IconButton>
           </Toolbar>
         </Container>
@@ -140,6 +286,24 @@ export function Navbar() {
       >
         {drawer}
       </Drawer>
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog open={logoutDialogOpen} onClose={handleLogoutCancel}>
+        <DialogTitle>Confirm Logout</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to logout? You will need to sign in again to access your account.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleLogoutCancel} color="inherit">
+            Cancel
+          </Button>
+          <Button onClick={handleLogoutConfirm} color="error" variant="contained">
+            Logout
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
