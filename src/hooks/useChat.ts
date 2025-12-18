@@ -133,6 +133,7 @@ export function useChat() {
             participants: participantsWithProfiles,
           } as Conversation;
         })
+      );
 
       setConversations(enrichedConversations);
     }
