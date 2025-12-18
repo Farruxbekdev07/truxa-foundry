@@ -101,9 +101,10 @@ export default function PitchDeck() {
       return;
     }
 
+    const slidesArray = Array.isArray(data.slides) ? data.slides : [];
     const deckData = {
       ...data,
-      slides: (data.slides || []) as Slide[],
+      slides: slidesArray as unknown as Slide[],
     };
 
     setDeck(deckData);
@@ -117,17 +118,20 @@ export default function PitchDeck() {
 
     setSaving(true);
 
-    const deckData = {
-      startup_id: startupId,
-      title,
-      slides: slides as unknown as Record<string, unknown>[],
-    };
+    const slidesJson = JSON.parse(JSON.stringify(slides));
 
     let result;
     if (deckId === "new") {
-      result = await supabase.from("pitch_decks").insert([deckData]).select().single();
+      result = await supabase.from("pitch_decks").insert([{
+        startup_id: startupId,
+        title,
+        slides: slidesJson,
+      }]).select().single();
     } else {
-      result = await supabase.from("pitch_decks").update(deckData).eq("id", deckId).select().single();
+      result = await supabase.from("pitch_decks").update({
+        title,
+        slides: slidesJson,
+      }).eq("id", deckId).select().single();
     }
 
     if (result.error) {

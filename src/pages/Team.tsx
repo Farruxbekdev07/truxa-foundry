@@ -69,7 +69,7 @@ export default function Team() {
       .neq("id", user?.id || "");
 
     if (roleFilter !== "all") {
-      query = query.eq("role", roleFilter);
+      query = query.eq("role", roleFilter as "founder" | "investor" | "mentor" | "developer" | "customer");
     }
 
     const { data } = await query.order("full_name");
