@@ -31,6 +31,11 @@ import {
   User,
   Menu,
   X,
+  MessageSquare,
+  Bell,
+  BarChart3,
+  Users,
+  ShoppingBag,
 } from "lucide-react";
 import { roleColors } from "@/theme/muiTheme";
 
@@ -56,10 +61,35 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     navigate("/");
   };
 
-  const navItems = [
+  const baseNavItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
     { icon: Briefcase, label: "Startups", href: "/startups" },
+    { icon: BarChart3, label: "Analytics", href: "/analytics" },
+    { icon: MessageSquare, label: "Chat", href: "/chat" },
+    { icon: Bell, label: "Notifications", href: "/notifications" },
     { icon: User, label: "Profile", href: "/profile" },
+  ];
+
+  const roleNavItems: Record<string, typeof baseNavItems> = {
+    founder: [
+      { icon: Users, label: "Find Talent", href: "/team" },
+      { icon: ShoppingBag, label: "Marketplace", href: "/marketplace" },
+    ],
+    investor: [
+      { icon: Users, label: "Find Talent", href: "/team" },
+    ],
+    mentor: [
+      { icon: Users, label: "Find Talent", href: "/team" },
+    ],
+    developer: [],
+    customer: [
+      { icon: ShoppingBag, label: "Marketplace", href: "/marketplace" },
+    ],
+  };
+
+  const navItems = [
+    ...baseNavItems,
+    ...(profile?.role ? roleNavItems[profile.role] || [] : []),
   ];
 
   const getRoleIcon = () => {
