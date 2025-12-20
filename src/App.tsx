@@ -19,6 +19,7 @@ import Marketplace from "./pages/Marketplace";
 import PitchDeck from "./pages/PitchDeck";
 import PitchVideo from "./pages/PitchVideo";
 import AISuggestions from "./pages/AISuggestions";
+import CreateStartup from "./pages/CreateStartup";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,9 @@ const App = () => (
             {/* Public routes */}
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            
+            {/* Founder onboarding - create startup after registration */}
+            <Route path="/create-startup" element={<CreateStartup />} />
             
             {/* Protected routes - all authenticated users */}
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
