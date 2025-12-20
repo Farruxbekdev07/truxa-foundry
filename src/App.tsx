@@ -18,6 +18,7 @@ import Team from "./pages/Team";
 import Marketplace from "./pages/Marketplace";
 import PitchDeck from "./pages/PitchDeck";
 import PitchVideo from "./pages/PitchVideo";
+import AISuggestions from "./pages/AISuggestions";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -66,6 +67,13 @@ const App = () => (
             <Route path="/startups/:startupId/pitch-video/:videoId" element={
               <ProtectedRoute allowedRoles={["founder"]}>
                 <PitchVideo />
+              </ProtectedRoute>
+            } />
+            
+            {/* AI Suggestions - founders only */}
+            <Route path="/ai-suggestions" element={
+              <ProtectedRoute allowedRoles={["founder"]}>
+                <AISuggestions />
               </ProtectedRoute>
             } />
             
