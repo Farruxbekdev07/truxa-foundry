@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   Box,
-  Button,
   Typography,
   Paper,
   Chip,
@@ -16,14 +15,13 @@ import {
   Rocket,
   TrendingUp,
   GraduationCap,
-  Plus,
   Users,
   Briefcase,
   ArrowRight,
 } from "lucide-react";
 import { roleColors } from "@/theme/muiTheme";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-import { CreateStartupDialog } from "@/components/dashboard/CreateStartupDialog";
+import { Button } from "@mui/material";
 
 interface Startup {
   id: string;
@@ -46,7 +44,6 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [startups, setStartups] = useState<Startup[]>([]);
   const [loadingStartups, setLoadingStartups] = useState(true);
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -144,15 +141,6 @@ export default function Dashboard() {
               Here's what's happening in the ecosystem today.
             </Typography>
           </Box>
-          {profile.role === "founder" && (
-            <Button
-              variant="contained"
-              startIcon={<Plus className="w-5 h-5" />}
-              onClick={() => setCreateDialogOpen(true)}
-            >
-              Add Startup
-            </Button>
-          )}
         </Stack>
 
         {/* Stats */}
@@ -208,18 +196,9 @@ export default function Dashboard() {
                 className="text-muted-foreground mb-6 max-w-sm mx-auto"
               >
                 {profile.role === "founder"
-                  ? "Create your first startup to get started and connect with investors and mentors."
+                  ? "Your startup will appear here once you complete the setup."
                   : "Check back later for new opportunities in the ecosystem."}
               </Typography>
-              {profile.role === "founder" && (
-                <Button
-                  variant="contained"
-                  startIcon={<Plus className="w-5 h-5" />}
-                  onClick={() => setCreateDialogOpen(true)}
-                >
-                  Create Startup
-                </Button>
-              )}
             </Box>
           ) : (
             <Box>
@@ -322,15 +301,6 @@ export default function Dashboard() {
           )}
         </Paper>
       </Box>
-
-      <CreateStartupDialog
-        open={createDialogOpen}
-        onClose={() => setCreateDialogOpen(false)}
-        onSuccess={() => {
-          setCreateDialogOpen(false);
-          fetchStartups();
-        }}
-      />
     </DashboardLayout>
   );
 }

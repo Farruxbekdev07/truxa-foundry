@@ -11,6 +11,7 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { useAuth } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
 import { Rocket, Mail, Lock, User, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
@@ -48,7 +49,7 @@ const roles: { value: Role; label: string; description: string }[] = [
 export default function Auth() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { signUp, signIn, user, loading: authLoading } = useAuth();
+  const { signUp, signIn, user, profile, loading: authLoading } = useAuth();
   const { toast } = useToast();
 
   const [isLogin, setIsLogin] = useState(searchParams.get("mode") === "login");
@@ -66,10 +67,31 @@ export default function Auth() {
   }>({});
 
   useEffect(() => {
-    if (user && !authLoading) {
-      navigate("/dashboard");
+    if (user && profile && !authLoading) {
+      // Founders need to create their startup first
+      if (profile.role === "founder") {
+        checkFounderStartup();
+      } else {
+        navigate("/dashboard");
+      }
     }
-  }, [user, authLoading, navigate]);
+  }, [user, profile, authLoading, navigate]);
+
+  const checkFounderStartup = async () => {
+    if (!user) return;
+    
+    const { data } = await supabase
+      .from("startups")
+      .select("id")
+      .eq("founder_id", user.id)
+      .maybeSingle();
+
+    if (data) {
+      navigate("/dashboard");
+    } else {
+      navigate("/create-startup");
+    }
+  };
 
   const validate = () => {
     const newErrors: typeof errors = {};
