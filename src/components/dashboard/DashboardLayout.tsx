@@ -36,6 +36,7 @@ import {
   BarChart3,
   Users,
   ShoppingBag,
+  Sparkles,
 } from "lucide-react";
 import { roleColors } from "@/theme/muiTheme";
 
@@ -72,6 +73,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const roleNavItems: Record<string, typeof baseNavItems> = {
     founder: [
+      { icon: Sparkles, label: "AI Suggestions", href: "/ai-suggestions" },
       { icon: Users, label: "Find Talent", href: "/team" },
       { icon: ShoppingBag, label: "Marketplace", href: "/marketplace" },
     ],
