@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Box, Container, Typography, Stack } from '@mui/material';
-import { Rocket } from 'lucide-react';
+import { Zap } from 'lucide-react';
 
 export function Footer() {
   return (
-    <Box component="footer" className="py-12 bg-card border-t border-border/50">
+    <Box component="footer" className="py-12 bg-background border-t border-border/50">
       <Container maxWidth="lg">
         <Stack
           direction={{ xs: 'column', md: 'row' }}
@@ -19,16 +19,16 @@ export function Footer() {
             className="flex items-center gap-2 no-underline text-inherit"
           >
             <Box className="w-8 h-8 rounded-lg bg-gradient-hero flex items-center justify-center">
-              <Rocket className="w-4 h-4 text-white" />
+              <Zap className="w-4 h-4 text-primary-foreground" fill="currentColor" />
             </Box>
             <Typography variant="h6" className="font-bold">
-              StartupHub
+              Truxa Foundry
             </Typography>
           </Box>
 
           {/* Copyright */}
           <Typography variant="body2" className="text-muted-foreground">
-            © {new Date().getFullYear()} StartupHub. All rights reserved.
+            © {new Date().getFullYear()} Truxa Foundry. All rights reserved.
           </Typography>
 
           {/* Links */}

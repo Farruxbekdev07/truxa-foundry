@@ -34,7 +34,7 @@ serve(async (req) => {
       });
     }
 
-    // Fetch user's startup data
+    // Fetch user's startup data with new fields
     const { data: startup, error: startupError } = await supabaseClient
       .from("startups")
       .select("*")
@@ -71,11 +71,16 @@ serve(async (req) => {
       });
     }
 
+    // Enhanced context with new fields
     const startupContext = `
 Startup Name: ${startup.name || "Not provided"}
 Industry: ${startup.industry || "Not specified"}
 Stage: ${startup.stage || "Not specified"}
 Description: ${startup.description || "No description provided"}
+Target Market: ${startup.target_market || "Not specified"}
+Problem Being Solved: ${startup.problem || "Not specified"}
+Solution: ${startup.solution || "Not specified"}
+Team Information: ${startup.team_info || "Not specified"}
 Looking for Team: ${startup.looking_for_team ? "Yes" : "No"}
 Looking for Funding: ${startup.looking_for_funding ? "Yes" : "No"}
 Looking for Mentorship: ${startup.looking_for_mentorship ? "Yes" : "No"}
@@ -84,28 +89,28 @@ Founder Name: ${profile?.full_name || "Unknown"}
 Founder Bio: ${profile?.bio || "No bio provided"}
     `.trim();
 
-    const systemPrompt = `You are a startup advisor AI for Truxa Foundry. Analyze the startup profile and provide actionable, specific suggestions. Be encouraging but honest. Format your response as JSON with these exact keys:
+    const systemPrompt = `You are a startup advisor AI for Truxa Foundry, an AI-powered startup validation platform. Analyze the startup profile comprehensively and provide actionable, specific suggestions based on the problem they're solving, their solution, and target market. Be encouraging but honest and data-driven. Format your response as JSON with these exact keys:
 
 {
   "productMarketFit": {
-    "score": <number 1-10>,
-    "strengths": [<array of 2-3 strengths>],
-    "improvements": [<array of 3-4 specific improvements>]
+    "score": <number 1-10, based on problem-solution clarity and target market fit>,
+    "strengths": [<array of 2-3 specific strengths based on their problem/solution>],
+    "improvements": [<array of 3-4 specific, actionable improvements>]
   },
   "growthStrategy": {
-    "immediateActions": [<array of 3-4 actions for next 30 days>],
+    "immediateActions": [<array of 3-4 specific actions for next 30 days based on their stage>],
     "longTermGoals": [<array of 2-3 goals for next 6-12 months>]
   },
   "marketInsights": {
-    "opportunities": [<array of 2-3 market opportunities>],
-    "challenges": [<array of 2-3 potential challenges to address>],
-    "competitiveAdvantage": <string describing potential unique value proposition>
+    "opportunities": [<array of 2-3 market opportunities specific to their target market>],
+    "challenges": [<array of 2-3 potential challenges based on their industry>],
+    "competitiveAdvantage": <string describing their potential unique value proposition based on their solution>
   },
   "teamAndResources": {
-    "currentNeeds": [<array of 2-3 immediate resource needs>],
+    "currentNeeds": [<array of 2-3 immediate resource needs based on their stage and team info>],
     "recommendations": [<array of 2-3 team building recommendations>]
   },
-  "overallSummary": <2-3 sentence summary of the startup's potential and key focus areas>
+  "overallSummary": <2-3 sentence executive summary of the startup's potential, key focus areas, and recommended next steps>
 }
 
 Only respond with valid JSON, no additional text.`;
@@ -120,7 +125,7 @@ Only respond with valid JSON, no additional text.`;
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: `Analyze this startup profile and provide suggestions:\n\n${startupContext}` },
+          { role: "user", content: `Analyze this startup profile and provide comprehensive validation insights:\n\n${startupContext}` },
         ],
       }),
     });

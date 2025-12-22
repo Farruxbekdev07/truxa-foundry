@@ -22,13 +22,14 @@ import {
   DialogContentText,
   DialogActions,
 } from '@mui/material';
-import { Rocket, Menu as MenuIcon, X, LayoutDashboard, User, LogOut } from 'lucide-react';
+import { Zap, Menu as MenuIcon, X, LayoutDashboard, User, LogOut } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { roleColors } from '@/theme/muiTheme';
 
 const navLinks = [
   { label: 'Features', href: '/#features' },
-  { label: 'For You', href: '/#roles' },
+  { label: 'How It Works', href: '/#how-it-works' },
+  { label: 'For Teams', href: '/#roles' },
 ];
 
 export function Navbar() {
@@ -148,7 +149,7 @@ export function Navbar() {
               fullWidth
               onClick={handleDrawerToggle}
             >
-              Get Started
+              Start Free
             </Button>
           </>
         )}
@@ -158,19 +159,19 @@ export function Navbar() {
 
   return (
     <>
-      <AppBar position="fixed" color="transparent">
+      <AppBar position="fixed" color="transparent" elevation={0} sx={{ backdropFilter: 'blur(12px)', bgcolor: 'rgba(255,255,255,0.9)' }}>
         <Container maxWidth="lg">
           <Toolbar disableGutters className="h-16">
             {/* Logo */}
             <Box
               component={Link}
               to="/"
-              className="flex items-center gap-2 no-underline text-inherit"
+              className="flex items-center gap-2.5 no-underline text-inherit"
             >
               <Box className="w-9 h-9 rounded-xl bg-gradient-hero flex items-center justify-center">
-                <Rocket className="w-5 h-5 text-white" />
+                <Zap className="w-5 h-5 text-primary-foreground" fill="currentColor" />
               </Box>
-              <span className="text-xl font-bold text-foreground">StartupHub</span>
+              <span className="text-xl font-bold text-foreground tracking-tight">Truxa Foundry</span>
             </Box>
 
             {/* Desktop Navigation */}
@@ -181,7 +182,8 @@ export function Navbar() {
                   component={Link}
                   to={link.href}
                   color="inherit"
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-muted-foreground hover:text-foreground font-medium"
+                  sx={{ textTransform: 'none' }}
                 >
                   {link.label}
                 </Button>
@@ -257,11 +259,21 @@ export function Navbar() {
                 </>
               ) : (
                 <>
-                  <Button component={Link} to="/auth?mode=login" color="inherit">
+                  <Button 
+                    component={Link} 
+                    to="/auth?mode=login" 
+                    color="inherit"
+                    sx={{ textTransform: 'none', fontWeight: 500 }}
+                  >
                     Sign In
                   </Button>
-                  <Button component={Link} to="/auth" variant="contained">
-                    Get Started
+                  <Button 
+                    component={Link} 
+                    to="/auth" 
+                    variant="contained"
+                    sx={{ textTransform: 'none', fontWeight: 600, px: 3 }}
+                  >
+                    Start Free
                   </Button>
                 </>
               )}
