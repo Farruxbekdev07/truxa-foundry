@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import { useAuth } from "@/lib/auth";
 import {
-  Rocket,
+  Zap,
   TrendingUp,
   GraduationCap,
   Code,
@@ -40,7 +40,7 @@ import {
 } from "lucide-react";
 import { roleColors } from "@/theme/muiTheme";
 
-const DRAWER_WIDTH = 256;
+const DRAWER_WIDTH = 260;
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -97,7 +97,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const getRoleIcon = () => {
     switch (profile?.role) {
       case "founder":
-        return Rocket;
+        return Zap;
       case "investor":
         return TrendingUp;
       case "mentor":
@@ -119,17 +119,17 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const RoleIcon = getRoleIcon();
 
   const drawer = (
-    <Box className="h-full flex flex-col p-6">
+    <Box className="h-full flex flex-col p-5">
       <Box
         component={Link}
         to="/"
-        className="flex items-center gap-2 mb-8 no-underline text-inherit"
+        className="flex items-center gap-2.5 mb-8 no-underline text-inherit"
       >
         <Box className="w-9 h-9 rounded-xl bg-gradient-hero flex items-center justify-center">
-          <Rocket className="w-5 h-5 text-white" />
+          <Zap className="w-5 h-5 text-primary-foreground" fill="currentColor" />
         </Box>
-        <Typography variant="h6" className="font-bold">
-          StartupHub
+        <Typography variant="h6" className="font-bold tracking-tight">
+          Truxa Foundry
         </Typography>
       </Box>
 
@@ -142,11 +142,22 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             selected={location.pathname === item.href}
             className="rounded-lg mb-1"
             onClick={() => setMobileOpen(false)}
+            sx={{
+              '&.Mui-selected': {
+                backgroundColor: 'hsl(var(--primary) / 0.1)',
+                '&:hover': {
+                  backgroundColor: 'hsl(var(--primary) / 0.15)',
+                },
+              },
+            }}
           >
             <ListItemIcon className="min-w-0 mr-3">
               <item.icon className="w-5 h-5" />
             </ListItemIcon>
-            <ListItemText primary={item.label} />
+            <ListItemText 
+              primary={item.label} 
+              primaryTypographyProps={{ fontWeight: location.pathname === item.href ? 600 : 400 }}
+            />
           </ListItemButton>
         ))}
       </List>
@@ -154,7 +165,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <Divider className="my-4" />
 
       {profile && (
-        <Box className="flex items-center gap-3 mb-4">
+        <Box className="flex items-center gap-3 mb-4 p-3 rounded-xl bg-secondary/50">
           <Box
             className="w-10 h-10 rounded-full flex items-center justify-center"
             sx={{ backgroundColor: `${getRoleColor()}20` }}
@@ -162,7 +173,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <RoleIcon className="w-5 h-5" style={{ color: getRoleColor() }} />
           </Box>
           <Box className="flex-1 min-w-0">
-            <Typography variant="body2" className="font-medium truncate">
+            <Typography variant="body2" className="font-semibold truncate">
               {profile.full_name}
             </Typography>
             <Typography
@@ -180,6 +191,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         startIcon={<LogOut className="w-5 h-5" />}
         color="inherit"
         className="justify-start text-muted-foreground hover:text-destructive"
+        sx={{ textTransform: 'none' }}
       >
         Sign Out
       </Button>
@@ -196,6 +208,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           "& .MuiDrawer-paper": {
             width: DRAWER_WIDTH,
             boxSizing: "border-box",
+            borderRight: '1px solid hsl(var(--border))',
           },
         }}
       >
@@ -225,7 +238,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         sx={{
           display: { lg: "none" },
           bgcolor: "background.paper",
+          backdropFilter: 'blur(12px)',
         }}
+        elevation={0}
       >
         <Toolbar>
           <IconButton
@@ -245,10 +260,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             className="flex items-center gap-2 no-underline text-inherit"
           >
             <Box className="w-8 h-8 rounded-lg bg-gradient-hero flex items-center justify-center">
-              <Rocket className="w-4 h-4 text-white" />
+              <Zap className="w-4 h-4 text-primary-foreground" fill="currentColor" />
             </Box>
             <Typography variant="h6" className="font-bold text-foreground">
-              StartupHub
+              Truxa Foundry
             </Typography>
           </Box>
         </Toolbar>

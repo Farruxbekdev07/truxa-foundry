@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
-import { Rocket, Mail, Lock, User, ArrowLeft } from "lucide-react";
+import { Zap, Mail, Lock, User, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 
@@ -27,22 +27,22 @@ const roles: { value: Role; label: string; description: string }[] = [
   {
     value: "founder",
     label: "Founder",
-    description: "Build and showcase your startup",
+    description: "Validate and build your startup",
   },
   {
     value: "investor",
     label: "Investor",
-    description: "Discover and invest in startups",
+    description: "Discover validated startups",
   },
   {
     value: "mentor",
     label: "Mentor",
-    description: "Guide entrepreneurs to success",
+    description: "Guide founders to success",
   },
   {
     value: "developer",
     label: "Developer",
-    description: "Join innovative startup teams",
+    description: "Join innovative teams",
   },
 ];
 
@@ -68,7 +68,7 @@ export default function Auth() {
 
   useEffect(() => {
     if (user && profile && !authLoading) {
-      // Founders need to create their startup first
+      // Founders need to complete startup info first
       if (profile.role === "founder") {
         checkFounderStartup();
       } else {
@@ -138,7 +138,6 @@ export default function Auth() {
             title: "Welcome back!",
             description: "You have been signed in successfully.",
           });
-          navigate("/dashboard");
         }
       } else {
         const { error } = await signUp(email, password, fullName, role);
@@ -154,9 +153,8 @@ export default function Auth() {
         } else {
           toast({
             title: "Account created!",
-            description: "Welcome to StartupHub. Let's get started!",
+            description: "Welcome to Truxa Foundry. Let's validate your startup!",
           });
-          navigate("/dashboard");
         }
       }
     } finally {
@@ -176,38 +174,39 @@ export default function Auth() {
     <Box className="min-h-screen flex bg-gradient-subtle">
       {/* Left Panel - Branding */}
       <Box className="hidden lg:flex lg:w-1/2 bg-gradient-hero p-12 flex-col justify-between relative overflow-hidden">
-        <Box className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent)]" />
+        <Box className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent)]" />
+        <Box className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.05),transparent)]" />
 
         <Box className="relative z-10">
           <Box
             component={Link}
             to="/"
-            className="flex items-center gap-2 mb-12 no-underline"
+            className="flex items-center gap-2.5 mb-12 no-underline"
           >
-            <Box className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
-              <Rocket className="w-6 h-6 text-white" />
+            <Box className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center backdrop-blur-sm border border-white/20">
+              <Zap className="w-6 h-6 text-primary-foreground" fill="currentColor" />
             </Box>
-            <Typography variant="h5" className="font-bold text-white">
-              StartupHub
+            <Typography variant="h5" className="font-bold text-primary-foreground">
+              Truxa Foundry
             </Typography>
           </Box>
 
           <Typography
             variant="h3"
-            className="font-bold text-white leading-tight mb-6"
+            className="font-bold text-primary-foreground leading-tight mb-6"
           >
-            {isLogin ? "Welcome back!" : "Join the ecosystem"}
+            {isLogin ? "Welcome back!" : "Start validating your startup idea"}
           </Typography>
-          <Typography variant="body1" className="text-white/80 max-w-md">
+          <Typography variant="body1" className="text-primary-foreground/80 max-w-md leading-relaxed">
             {isLogin
-              ? "Sign in to access your dashboard and connect with the startup community."
-              : "Create your account and start connecting with founders, investors, mentors, and developers."}
+              ? "Sign in to access your dashboard and continue building your validated startup."
+              : "Create your account and get AI-powered insights on your startup's product-market fit in minutes."}
           </Typography>
         </Box>
 
         <Box className="relative z-10">
-          <Typography variant="body2" className="text-white/60">
-            © {new Date().getFullYear()} StartupHub. All rights reserved.
+          <Typography variant="body2" className="text-primary-foreground/60">
+            © {new Date().getFullYear()} Truxa Foundry. All rights reserved.
           </Typography>
         </Box>
       </Box>
@@ -223,6 +222,7 @@ export default function Auth() {
               startIcon={<ArrowLeft className="w-5 h-5" />}
               color="inherit"
               className="text-muted-foreground"
+              sx={{ textTransform: 'none' }}
             >
               Back to home
             </Button>
@@ -238,7 +238,7 @@ export default function Auth() {
                 : "Already have an account? "}
               <Button
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-primary font-medium p-0 min-w-0"
+                className="text-primary font-semibold p-0 min-w-0"
                 sx={{ textTransform: "none" }}
               >
                 {isLogin ? "Sign up" : "Sign in"}
@@ -302,7 +302,7 @@ export default function Auth() {
 
               {!isLogin && (
                 <Box>
-                  <Typography variant="body2" className="font-medium mb-2">
+                  <Typography variant="body2" className="font-semibold mb-3">
                     I am a...
                   </Typography>
                   <Box className="grid grid-cols-2 gap-3">
@@ -317,7 +317,7 @@ export default function Auth() {
                             : "border-border hover:border-primary/50"
                         }`}
                       >
-                        <Typography variant="body2" className="font-medium">
+                        <Typography variant="body2" className="font-semibold">
                           {r.label}
                         </Typography>
                         <Typography
@@ -338,7 +338,12 @@ export default function Auth() {
                 size="large"
                 fullWidth
                 disabled={loading}
-                className="h-12"
+                sx={{ 
+                  height: 48,
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  fontSize: '1rem',
+                }}
               >
                 {loading ? (
                   <CircularProgress size={24} />

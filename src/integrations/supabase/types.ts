@@ -388,8 +388,12 @@ export type Database = {
           looking_for_mentorship: boolean | null
           looking_for_team: boolean | null
           name: string
+          problem: string | null
           rating: number | null
+          solution: string | null
           stage: string | null
+          target_market: string | null
+          team_info: string | null
           updated_at: string | null
         }
         Insert: {
@@ -402,8 +406,12 @@ export type Database = {
           looking_for_mentorship?: boolean | null
           looking_for_team?: boolean | null
           name: string
+          problem?: string | null
           rating?: number | null
+          solution?: string | null
           stage?: string | null
+          target_market?: string | null
+          team_info?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -416,8 +424,12 @@ export type Database = {
           looking_for_mentorship?: boolean | null
           looking_for_team?: boolean | null
           name?: string
+          problem?: string | null
           rating?: number | null
+          solution?: string | null
           stage?: string | null
+          target_market?: string | null
+          team_info?: string | null
           updated_at?: string | null
         }
         Relationships: [
