@@ -12,9 +12,10 @@ import {
 } from "@mui/material";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
-import { Zap, Mail, Lock, User, ArrowLeft } from "lucide-react";
+import { Mail, Lock, User, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import BrandLogo from "../../public/logo.svg";
 
 const emailSchema = z.string().email("Please enter a valid email address");
 const passwordSchema = z
@@ -79,7 +80,7 @@ export default function Auth() {
 
   const checkFounderStartup = async () => {
     if (!user) return;
-    
+
     const { data } = await supabase
       .from("startups")
       .select("id")
@@ -153,7 +154,8 @@ export default function Auth() {
         } else {
           toast({
             title: "Account created!",
-            description: "Welcome to Truxa Foundry. Let's validate your startup!",
+            description:
+              "Welcome to Truxa Foundry. Let's validate your startup!",
           });
         }
       }
@@ -183,10 +185,15 @@ export default function Auth() {
             to="/"
             className="flex items-center gap-2.5 mb-12 no-underline"
           >
-            <Box className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center backdrop-blur-sm border border-white/20">
-              <Zap className="w-6 h-6 text-primary-foreground" fill="currentColor" />
-            </Box>
-            <Typography variant="h5" className="font-bold text-primary-foreground">
+            <Box
+              src={BrandLogo}
+              component={"img"}
+              className="w-9 h-9 rounded-xl bg-gradient-hero flex items-center justify-center"
+            />
+            <Typography
+              variant="h5"
+              className="font-bold text-primary-foreground"
+            >
               Truxa Foundry
             </Typography>
           </Box>
@@ -197,7 +204,10 @@ export default function Auth() {
           >
             {isLogin ? "Welcome back!" : "Start validating your startup idea"}
           </Typography>
-          <Typography variant="body1" className="text-primary-foreground/80 max-w-md leading-relaxed">
+          <Typography
+            variant="body1"
+            className="text-primary-foreground/80 max-w-md leading-relaxed"
+          >
             {isLogin
               ? "Sign in to access your dashboard and continue building your validated startup."
               : "Create your account and get AI-powered insights on your startup's product-market fit in minutes."}
@@ -222,7 +232,7 @@ export default function Auth() {
               startIcon={<ArrowLeft className="w-5 h-5" />}
               color="inherit"
               className="text-muted-foreground"
-              sx={{ textTransform: 'none' }}
+              sx={{ textTransform: "none" }}
             >
               Back to home
             </Button>
@@ -338,11 +348,11 @@ export default function Auth() {
                 size="large"
                 fullWidth
                 disabled={loading}
-                sx={{ 
+                sx={{
                   height: 48,
-                  textTransform: 'none',
+                  textTransform: "none",
                   fontWeight: 600,
-                  fontSize: '1rem',
+                  fontSize: "1rem",
                 }}
               >
                 {loading ? (

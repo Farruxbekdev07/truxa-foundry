@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
-import { Box, Button, Container, Typography, Stack } from '@mui/material';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { Link } from "react-router-dom";
+import { Box, Button, Container, Typography, Stack } from "@mui/material";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 export function CTA() {
   return (
@@ -17,7 +17,7 @@ export function CTA() {
               No credit card required
             </Typography>
           </Box>
-          
+
           <Typography
             variant="h2"
             className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-primary-foreground"
@@ -26,13 +26,20 @@ export function CTA() {
             <br />
             Startup Idea?
           </Typography>
-          <Typography
-            variant="body1"
-            className="text-lg sm:text-xl mb-10 text-primary-foreground/80 max-w-xl mx-auto"
+          <Box className="flex justify-center mt-4 mb-4">
+            <Typography
+              variant="h6"
+              className="text-lg sm:text-xl mb-10 text-primary-foreground/80 max-w-xl mx-auto"
+            >
+              Join thousands of founders who use AI-powered insights to build
+              startups that succeed.
+            </Typography>
+          </Box>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            justifyContent="center"
           >
-            Join thousands of founders who use AI-powered insights to build startups that succeed.
-          </Typography>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
             <Button
               component={Link}
               to="/auth"
@@ -40,16 +47,16 @@ export function CTA() {
               size="large"
               endIcon={<ArrowRight className="w-5 h-5" />}
               sx={{
-                backgroundColor: 'white',
-                color: 'hsl(220, 70%, 25%)',
-                '&:hover': {
-                  backgroundColor: 'rgba(255,255,255,0.9)',
+                backgroundColor: "white",
+                color: "hsl(220, 70%, 25%)",
+                "&:hover": {
+                  backgroundColor: "rgba(255,255,255,0.9)",
                 },
                 height: 56,
                 px: 5,
-                fontSize: '1rem',
+                fontSize: "1rem",
                 fontWeight: 600,
-                textTransform: 'none',
+                textTransform: "none",
                 borderRadius: 2,
               }}
             >
@@ -61,17 +68,17 @@ export function CTA() {
               variant="outlined"
               size="large"
               sx={{
-                borderColor: 'rgba(255,255,255,0.3)',
-                color: 'white',
-                '&:hover': {
-                  borderColor: 'rgba(255,255,255,0.5)',
-                  backgroundColor: 'rgba(255,255,255,0.1)',
+                borderColor: "rgba(255,255,255,0.3)",
+                color: "white",
+                "&:hover": {
+                  borderColor: "rgba(255,255,255,0.5)",
+                  backgroundColor: "rgba(255,255,255,0.1)",
                 },
                 height: 56,
                 px: 5,
-                fontSize: '1rem',
+                fontSize: "1rem",
                 fontWeight: 500,
-                textTransform: 'none',
+                textTransform: "none",
                 borderRadius: 2,
               }}
             >

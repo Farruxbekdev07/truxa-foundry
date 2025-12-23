@@ -1,13 +1,17 @@
-import { Link } from 'react-router-dom';
-import { Box, Container, Typography, Stack } from '@mui/material';
-import { Zap } from 'lucide-react';
+import { Link } from "react-router-dom";
+import { Box, Container, Typography, Stack } from "@mui/material";
+
+import BrandLogo from "../../../public/logo.svg";
 
 export function Footer() {
   return (
-    <Box component="footer" className="py-12 bg-background border-t border-border/50">
+    <Box
+      component="footer"
+      className="py-12 bg-background border-t border-border/50"
+    >
       <Container maxWidth="lg">
         <Stack
-          direction={{ xs: 'column', md: 'row' }}
+          direction={{ xs: "column", md: "row" }}
           alignItems="center"
           justifyContent="space-between"
           spacing={3}
@@ -18,9 +22,11 @@ export function Footer() {
             to="/"
             className="flex items-center gap-2 no-underline text-inherit"
           >
-            <Box className="w-8 h-8 rounded-lg bg-gradient-hero flex items-center justify-center">
-              <Zap className="w-4 h-4 text-primary-foreground" fill="currentColor" />
-            </Box>
+            <Box
+              src={BrandLogo}
+              component={"img"}
+              className="w-9 h-9 rounded-xl bg-gradient-hero flex items-center justify-center"
+            />
             <Typography variant="h6" className="font-bold">
               Truxa Foundry
             </Typography>

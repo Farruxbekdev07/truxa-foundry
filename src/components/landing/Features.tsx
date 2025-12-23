@@ -1,36 +1,42 @@
-import { Box, Container, Typography, Paper, Grid } from '@mui/material';
-import { Brain, TrendingUp, Target, LineChart, Users, Zap } from 'lucide-react';
+import { Box, Container, Typography, Paper, Grid } from "@mui/material";
+import { Brain, TrendingUp, Target, LineChart, Users, Zap } from "lucide-react";
 
 const features = [
   {
     icon: Brain,
-    title: 'AI-Powered Analysis',
-    description: 'Get instant, intelligent feedback on your startup idea based on market data and startup success patterns.',
+    title: "AI-Powered Analysis",
+    description:
+      "Get instant, intelligent feedback on your startup idea based on market data and startup success patterns.",
   },
   {
     icon: Target,
-    title: 'Product-Market Fit Score',
-    description: 'Understand how well your product matches market demand with a clear, actionable PMF score.',
+    title: "Product-Market Fit Score",
+    description:
+      "Understand how well your product matches market demand with a clear, actionable PMF score.",
   },
   {
     icon: TrendingUp,
-    title: 'Growth Strategy',
-    description: 'Receive personalized growth recommendations with immediate actions and long-term milestones.',
+    title: "Growth Strategy",
+    description:
+      "Receive personalized growth recommendations with immediate actions and long-term milestones.",
   },
   {
     icon: LineChart,
-    title: 'Market Insights',
-    description: 'Discover market opportunities, competitive positioning, and potential challenges before launch.',
+    title: "Market Insights",
+    description:
+      "Discover market opportunities, competitive positioning, and potential challenges before launch.",
   },
   {
     icon: Users,
-    title: 'Team Building Guidance',
-    description: 'Know exactly what roles and resources you need to scale effectively.',
+    title: "Team Building Guidance",
+    description:
+      "Know exactly what roles and resources you need to scale effectively.",
   },
   {
     icon: Zap,
-    title: 'Instant Results',
-    description: 'No waiting. Submit your startup profile and receive comprehensive analysis in seconds.',
+    title: "Instant Results",
+    description:
+      "No waiting. Submit your startup profile and receive comprehensive analysis in seconds.",
   },
 ];
 
@@ -39,22 +45,28 @@ export function Features() {
     <Box component="section" className="py-24 bg-card" id="features">
       <Container maxWidth="lg">
         <Box className="text-center mb-16">
-          <Typography 
-            variant="overline" 
+          <Typography
+            variant="overline"
             className="text-primary font-semibold tracking-wider mb-2 block"
           >
             FEATURES
           </Typography>
-          <Typography variant="h2" className="text-3xl sm:text-4xl font-bold mb-4">
-            Everything You Need to{' '}
+          <Typography
+            variant="h2"
+            className="text-3xl sm:text-4xl font-bold mb-4"
+          >
+            Everything You Need to{" "}
             <span className="text-gradient">Validate Smart</span>
           </Typography>
-          <Typography
-            variant="body1"
-            className="text-lg text-muted-foreground max-w-2xl mx-auto"
-          >
-            Our AI analyzes your startup profile against thousands of data points to give you actionable insights for success.
-          </Typography>
+          <Box className="flex justify-center mt-4">
+            <Typography
+              variant="h6"
+              className="text-lg text-muted-foreground max-w-2xl mx-auto"
+            >
+              Our AI analyzes your startup profile against thousands of data
+              points to give you actionable insights for success.
+            </Typography>
+          </Box>
         </Box>
 
         <Grid container spacing={3} className="max-w-6xl mx-auto">
@@ -71,7 +83,10 @@ export function Features() {
                 <Typography variant="h6" className="font-semibold mb-2">
                   {feature.title}
                 </Typography>
-                <Typography variant="body2" className="text-muted-foreground leading-relaxed">
+                <Typography
+                  variant="body2"
+                  className="text-muted-foreground leading-relaxed"
+                >
                   {feature.description}
                 </Typography>
               </Paper>

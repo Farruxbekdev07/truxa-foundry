@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -21,15 +21,23 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-} from '@mui/material';
-import { Zap, Menu as MenuIcon, X, LayoutDashboard, User, LogOut } from 'lucide-react';
-import { useAuth } from '@/lib/auth';
-import { roleColors } from '@/theme/muiTheme';
+} from "@mui/material";
+import {
+  Zap,
+  Menu as MenuIcon,
+  X,
+  LayoutDashboard,
+  User,
+  LogOut,
+} from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import { roleColors } from "@/theme/muiTheme";
+import BrandLogo from "../../../public/logo.svg";
 
 const navLinks = [
-  { label: 'Features', href: '/#features' },
-  { label: 'How It Works', href: '/#how-it-works' },
-  { label: 'For Teams', href: '/#roles' },
+  { label: "Features", href: "/#features" },
+  { label: "How It Works", href: "/#how-it-works" },
+  { label: "For Teams", href: "/#roles" },
 ];
 
 export function Navbar() {
@@ -59,7 +67,7 @@ export function Navbar() {
   const handleLogoutConfirm = async () => {
     await signOut();
     setLogoutDialogOpen(false);
-    navigate('/');
+    navigate("/");
   };
 
   const handleLogoutCancel = () => {
@@ -68,16 +76,18 @@ export function Navbar() {
 
   const getInitials = (name: string) => {
     return name
-      .split(' ')
+      .split(" ")
       .map((n) => n[0])
-      .join('')
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
 
   const getRoleColor = () => {
     if (!profile?.role) return roleColors.founder;
-    return roleColors[profile.role as keyof typeof roleColors] || roleColors.founder;
+    return (
+      roleColors[profile.role as keyof typeof roleColors] || roleColors.founder
+    );
   };
 
   const drawer = (
@@ -159,7 +169,12 @@ export function Navbar() {
 
   return (
     <>
-      <AppBar position="fixed" color="transparent" elevation={0} sx={{ backdropFilter: 'blur(12px)', bgcolor: 'rgba(255,255,255,0.9)' }}>
+      <AppBar
+        position="fixed"
+        color="transparent"
+        elevation={0}
+        sx={{ backdropFilter: "blur(12px)", bgcolor: "rgba(255,255,255,0.9)" }}
+      >
         <Container maxWidth="lg">
           <Toolbar disableGutters className="h-16">
             {/* Logo */}
@@ -168,10 +183,14 @@ export function Navbar() {
               to="/"
               className="flex items-center gap-2.5 no-underline text-inherit"
             >
-              <Box className="w-9 h-9 rounded-xl bg-gradient-hero flex items-center justify-center">
-                <Zap className="w-5 h-5 text-primary-foreground" fill="currentColor" />
-              </Box>
-              <span className="text-xl font-bold text-foreground tracking-tight">Truxa Foundry</span>
+              <Box
+                src={BrandLogo}
+                component={"img"}
+                className="w-9 h-9 rounded-xl bg-gradient-hero flex items-center justify-center"
+              />
+              <span className="text-xl font-bold text-foreground tracking-tight">
+                Truxa Foundry
+              </span>
             </Box>
 
             {/* Desktop Navigation */}
@@ -183,7 +202,7 @@ export function Navbar() {
                   to={link.href}
                   color="inherit"
                   className="text-muted-foreground hover:text-foreground font-medium"
-                  sx={{ textTransform: 'none' }}
+                  sx={{ textTransform: "none" }}
                 >
                   {link.label}
                 </Button>
@@ -203,7 +222,7 @@ export function Navbar() {
                         width: 40,
                         height: 40,
                         bgcolor: getRoleColor(),
-                        fontSize: '0.875rem',
+                        fontSize: "0.875rem",
                         fontWeight: 600,
                       }}
                     >
@@ -214,16 +233,16 @@ export function Navbar() {
                     anchorEl={anchorEl}
                     open={Boolean(anchorEl)}
                     onClose={handleMenuClose}
-                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                    transformOrigin={{ horizontal: "right", vertical: "top" }}
+                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                     slotProps={{
                       paper: {
                         sx: {
                           mt: 1,
                           minWidth: 180,
-                          bgcolor: 'background.paper',
-                          border: '1px solid',
-                          borderColor: 'divider',
+                          bgcolor: "background.paper",
+                          border: "1px solid",
+                          borderColor: "divider",
                         },
                       },
                     }}
@@ -249,7 +268,10 @@ export function Navbar() {
                       Profile
                     </MenuItem>
                     <Divider />
-                    <MenuItem onClick={handleLogoutClick} sx={{ color: 'error.main' }}>
+                    <MenuItem
+                      onClick={handleLogoutClick}
+                      sx={{ color: "error.main" }}
+                    >
                       <ListItemIcon>
                         <LogOut className="w-4 h-4 text-red-500" />
                       </ListItemIcon>
@@ -259,19 +281,19 @@ export function Navbar() {
                 </>
               ) : (
                 <>
-                  <Button 
-                    component={Link} 
-                    to="/auth?mode=login" 
+                  <Button
+                    component={Link}
+                    to="/auth?mode=login"
                     color="inherit"
-                    sx={{ textTransform: 'none', fontWeight: 500 }}
+                    sx={{ textTransform: "none", fontWeight: 500 }}
                   >
                     Sign In
                   </Button>
-                  <Button 
-                    component={Link} 
-                    to="/auth" 
+                  <Button
+                    component={Link}
+                    to="/auth"
                     variant="contained"
-                    sx={{ textTransform: 'none', fontWeight: 600, px: 3 }}
+                    sx={{ textTransform: "none", fontWeight: 600, px: 3 }}
                   >
                     Start Free
                   </Button>
@@ -280,8 +302,16 @@ export function Navbar() {
             </Box>
 
             {/* Mobile Menu Button */}
-            <IconButton className="md:hidden" onClick={handleDrawerToggle} edge="end">
-              {mobileOpen ? <X className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
+            <IconButton
+              className="md:hidden"
+              onClick={handleDrawerToggle}
+              edge="end"
+            >
+              {mobileOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <MenuIcon className="w-5 h-5" />
+              )}
             </IconButton>
           </Toolbar>
         </Container>
@@ -304,14 +334,19 @@ export function Navbar() {
         <DialogTitle>Confirm Logout</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to logout? You will need to sign in again to access your account.
+            Are you sure you want to logout? You will need to sign in again to
+            access your account.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleLogoutCancel} color="inherit">
             Cancel
           </Button>
-          <Button onClick={handleLogoutConfirm} color="error" variant="contained">
+          <Button
+            onClick={handleLogoutConfirm}
+            color="error"
+            variant="contained"
+          >
             Logout
           </Button>
         </DialogActions>

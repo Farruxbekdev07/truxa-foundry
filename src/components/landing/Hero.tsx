@@ -1,12 +1,19 @@
-import { Link } from 'react-router-dom';
-import { Box, Button, Container, Typography, Paper, Stack } from '@mui/material';
-import { ArrowRight, Sparkles, BarChart3, Target, Shield } from 'lucide-react';
+import { Link } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Container,
+  Typography,
+  Paper,
+  Stack,
+} from "@mui/material";
+import { ArrowRight, Sparkles, BarChart3, Target, Shield } from "lucide-react";
 
 const metrics = [
-  { icon: Sparkles, label: 'AI-Powered Analysis', value: '100%' },
-  { icon: BarChart3, label: 'Validation Score', value: 'Real-time' },
-  { icon: Target, label: 'Market Fit', value: 'Instant' },
-  { icon: Shield, label: 'Data Secure', value: 'Always' },
+  { icon: Sparkles, label: "AI-Powered Analysis", value: "100%" },
+  { icon: BarChart3, label: "Validation Score", value: "Real-time" },
+  { icon: Target, label: "Market Fit", value: "Instant" },
+  { icon: Shield, label: "Data Secure", value: "Always" },
 ];
 
 export function Hero() {
@@ -20,14 +27,15 @@ export function Hero() {
       <Box className="absolute top-20 left-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse-soft" />
       <Box
         className="absolute bottom-20 right-10 w-80 h-80 bg-accent/8 rounded-full blur-3xl animate-pulse-soft"
-        sx={{ animationDelay: '1s' }}
+        sx={{ animationDelay: "1s" }}
       />
       {/* Grid pattern overlay */}
-      <Box 
+      <Box
         className="absolute inset-0 opacity-[0.02]"
         sx={{
-          backgroundImage: 'linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)',
-          backgroundSize: '60px 60px'
+          backgroundImage:
+            "linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
         }}
       />
 
@@ -46,7 +54,7 @@ export function Hero() {
 
           {/* Headline */}
           <Typography
-            variant="h1"
+            variant="h2"
             className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 animate-slide-up"
           >
             Validate Your Startup Idea
@@ -55,22 +63,25 @@ export function Hero() {
           </Typography>
 
           {/* Subheadline */}
-          <Typography
-            variant="h6"
-            className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-slide-up font-normal leading-relaxed"
-            sx={{ animationDelay: '0.1s' }}
-          >
-            Get instant AI-powered feedback on your startup's product-market fit, 
-            growth strategy, and competitive positioning. Make data-driven decisions from day one.
-          </Typography>
+          <Box className="flex justify-center mt-4 mb-4">
+            <Typography
+              variant="h6"
+              className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-slide-up font-normal leading-relaxed"
+              sx={{ animationDelay: "0.1s" }}
+            >
+              Get instant AI-powered feedback on your startup's product-market
+              fit, growth strategy, and competitive positioning. Make
+              data-driven decisions from day one.
+            </Typography>
+          </Box>
 
           {/* CTA Buttons */}
           <Stack
-            direction={{ xs: 'column', sm: 'row' }}
+            direction={{ xs: "column", sm: "row" }}
             spacing={2}
             justifyContent="center"
             className="mb-16 animate-slide-up"
-            sx={{ animationDelay: '0.2s' }}
+            sx={{ animationDelay: "0.2s" }}
           >
             <Button
               component={Link}
@@ -81,9 +92,9 @@ export function Hero() {
               sx={{
                 height: 56,
                 px: 5,
-                fontSize: '1rem',
+                fontSize: "1rem",
                 fontWeight: 600,
-                textTransform: 'none',
+                textTransform: "none",
                 borderRadius: 2,
               }}
             >
@@ -97,12 +108,12 @@ export function Hero() {
               sx={{
                 height: 56,
                 px: 5,
-                fontSize: '1rem',
+                fontSize: "1rem",
                 fontWeight: 500,
-                textTransform: 'none',
+                textTransform: "none",
                 borderRadius: 2,
                 borderWidth: 2,
-                '&:hover': { borderWidth: 2 }
+                "&:hover": { borderWidth: 2 },
               }}
             >
               See How It Works
@@ -112,7 +123,7 @@ export function Hero() {
           {/* Metrics */}
           <Box
             className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 max-w-3xl mx-auto animate-fade-in"
-            sx={{ animationDelay: '0.3s' }}
+            sx={{ animationDelay: "0.3s" }}
           >
             {metrics.map((metric) => (
               <Paper
@@ -123,7 +134,10 @@ export function Hero() {
                 <Box className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
                   <metric.icon className="w-5 h-5 text-primary" />
                 </Box>
-                <Typography variant="h6" className="font-bold text-foreground mb-0.5">
+                <Typography
+                  variant="h6"
+                  className="font-bold text-foreground mb-0.5"
+                >
                   {metric.value}
                 </Typography>
                 <Typography variant="caption" className="text-muted-foreground">

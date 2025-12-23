@@ -39,6 +39,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { roleColors } from "@/theme/muiTheme";
+import BrandLogo from "../../../public/logo.svg";
 
 const DRAWER_WIDTH = 260;
 
@@ -77,12 +78,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       { icon: Users, label: "Find Talent", href: "/team" },
       { icon: ShoppingBag, label: "Marketplace", href: "/marketplace" },
     ],
-    investor: [
-      { icon: Users, label: "Find Talent", href: "/team" },
-    ],
-    mentor: [
-      { icon: Users, label: "Find Talent", href: "/team" },
-    ],
+    investor: [{ icon: Users, label: "Find Talent", href: "/team" }],
+    mentor: [{ icon: Users, label: "Find Talent", href: "/team" }],
     developer: [],
     customer: [
       { icon: ShoppingBag, label: "Marketplace", href: "/marketplace" },
@@ -125,9 +122,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         to="/"
         className="flex items-center gap-2.5 mb-8 no-underline text-inherit"
       >
-        <Box className="w-9 h-9 rounded-xl bg-gradient-hero flex items-center justify-center">
-          <Zap className="w-5 h-5 text-primary-foreground" fill="currentColor" />
-        </Box>
+        <Box
+          src={BrandLogo}
+          component={"img"}
+          className="w-9 h-9 rounded-xl bg-gradient-hero flex items-center justify-center"
+        />
         <Typography variant="h6" className="font-bold tracking-tight">
           Truxa Foundry
         </Typography>
@@ -143,10 +142,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             className="rounded-lg mb-1"
             onClick={() => setMobileOpen(false)}
             sx={{
-              '&.Mui-selected': {
-                backgroundColor: 'hsl(var(--primary) / 0.1)',
-                '&:hover': {
-                  backgroundColor: 'hsl(var(--primary) / 0.15)',
+              "&.Mui-selected": {
+                backgroundColor: "hsl(var(--primary) / 0.1)",
+                "&:hover": {
+                  backgroundColor: "hsl(var(--primary) / 0.15)",
                 },
               },
             }}
@@ -154,9 +153,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <ListItemIcon className="min-w-0 mr-3">
               <item.icon className="w-5 h-5" />
             </ListItemIcon>
-            <ListItemText 
-              primary={item.label} 
-              primaryTypographyProps={{ fontWeight: location.pathname === item.href ? 600 : 400 }}
+            <ListItemText
+              primary={item.label}
+              primaryTypographyProps={{
+                fontWeight: location.pathname === item.href ? 600 : 400,
+              }}
             />
           </ListItemButton>
         ))}
@@ -191,7 +192,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         startIcon={<LogOut className="w-5 h-5" />}
         color="inherit"
         className="justify-start text-muted-foreground hover:text-destructive"
-        sx={{ textTransform: 'none' }}
+        sx={{ textTransform: "none" }}
       >
         Sign Out
       </Button>
@@ -208,7 +209,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           "& .MuiDrawer-paper": {
             width: DRAWER_WIDTH,
             boxSizing: "border-box",
-            borderRight: '1px solid hsl(var(--border))',
+            borderRight: "1px solid hsl(var(--border))",
           },
         }}
       >
@@ -238,7 +239,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         sx={{
           display: { lg: "none" },
           bgcolor: "background.paper",
-          backdropFilter: 'blur(12px)',
+          backdropFilter: "blur(12px)",
         }}
         elevation={0}
       >
@@ -259,9 +260,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             to="/"
             className="flex items-center gap-2 no-underline text-inherit"
           >
-            <Box className="w-8 h-8 rounded-lg bg-gradient-hero flex items-center justify-center">
-              <Zap className="w-4 h-4 text-primary-foreground" fill="currentColor" />
-            </Box>
+            <Box
+              src={BrandLogo}
+              component={"img"}
+              className="w-9 h-9 rounded-xl bg-gradient-hero flex items-center justify-center"
+            />
             <Typography variant="h6" className="font-bold text-foreground">
               Truxa Foundry
             </Typography>
