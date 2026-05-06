@@ -5,7 +5,7 @@ import {
   useState,
   ReactNode,
 } from "react";
-import type { User } from "firebase/auth";
+import type { User as FirebaseUser } from "firebase/auth";
 import {
   fetchProfile,
   signInWithEmail,
@@ -16,8 +16,14 @@ import {
   type Role,
 } from "./firebase/auth-service";
 
+/** App-level user: Firebase user + `id` alias for `uid` to match prior Supabase shape. */
+export type AppUser = FirebaseUser & { id: string };
+
+const wrap = (u: FirebaseUser | null): AppUser | null =>
+  u ? Object.assign(u, { id: u.uid }) : null;
+
 interface AuthContextType {
-  user: User | null;
+  user: AppUser | null;
   profile: Profile | null;
   loading: boolean;
   signUp: (
@@ -33,13 +39,13 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsub = subscribeAuth(async (u) => {
-      setUser(u);
+      setUser(wrap(u));
       if (u) {
         try {
           const p = await fetchProfile(u.uid);
