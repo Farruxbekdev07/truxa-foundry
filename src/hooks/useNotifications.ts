@@ -22,8 +22,16 @@ interface Notification {
   user_id: string;
   read: boolean;
   data: unknown;
-  created_at: { toDate: () => Date } | string;
+  created_at: string;
 }
+
+const toIso = (v: unknown): string => {
+  if (!v) return new Date().toISOString();
+  if (typeof v === "string") return v;
+  if (typeof (v as { toDate?: () => Date }).toDate === "function")
+    return (v as { toDate: () => Date }).toDate().toISOString();
+  return new Date().toISOString();
+};
 
 export function useNotifications() {
   const { user } = useAuth();

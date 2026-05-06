@@ -23,7 +23,7 @@ interface Message {
   conversation_id: string;
   sender_id: string;
   content: string;
-  created_at: { toDate: () => Date } | string;
+  created_at: string;
   sender?: { full_name: string; avatar_url: string | null };
 }
 
@@ -31,13 +31,21 @@ interface Conversation {
   id: string;
   type: "direct" | "group";
   name: string | null;
-  created_at: unknown;
-  updated_at: unknown;
+  created_at: string;
+  updated_at: string;
   participants?: {
     user_id: string;
     profiles: { full_name: string; avatar_url: string | null };
   }[];
 }
+
+const ts = (v: unknown): string => {
+  if (!v) return new Date().toISOString();
+  if (typeof v === "string") return v;
+  if (typeof (v as { toDate?: () => Date }).toDate === "function")
+    return (v as { toDate: () => Date }).toDate().toISOString();
+  return new Date().toISOString();
+};
 
 export function useChat() {
   const { user } = useAuth();
