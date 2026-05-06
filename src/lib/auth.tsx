@@ -5,20 +5,25 @@ import {
   useState,
   ReactNode,
 } from "react";
-import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import type { User as FirebaseUser } from "firebase/auth";
+import {
+  fetchProfile,
+  signInWithEmail,
+  signOutUser,
+  signUpWithProfile,
+  subscribeAuth,
+  type Profile,
+  type Role,
+} from "./firebase/auth-service";
 
-interface Profile {
-  id: string;
-  full_name: string;
-  role: "founder" | "investor" | "mentor" | "developer" | "customer";
-  bio: string | null;
-  avatar_url: string | null;
-}
+/** App-level user: Firebase user + `id` alias for `uid` to match prior Supabase shape. */
+export type AppUser = FirebaseUser & { id: string };
+
+const wrap = (u: FirebaseUser | null): AppUser | null =>
+  u ? Object.assign(u, { id: u.uid }) : null;
 
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
+  user: AppUser | null;
   profile: Profile | null;
   loading: boolean;
   signUp: (
@@ -34,113 +39,68 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .maybeSingle();
-
-    if (data) {
-      setProfile(data as Profile);
-    }
-  };
-
   useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        setTimeout(() => {
-          fetchProfile(session.user.id);
-        }, 0);
+    const unsub = subscribeAuth(async (u) => {
+      setUser(wrap(u));
+      if (u) {
+        try {
+          const p = await fetchProfile(u.uid);
+          setProfile(p);
+        } catch (e) {
+          console.error("Failed to load profile", e);
+          setProfile(null);
+        }
       } else {
         setProfile(null);
       }
-
       setLoading(false);
     });
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
-
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    return () => unsub();
   }, []);
 
-  const signUp = async (
-    email: string,
-    password: string,
-    fullName: string,
-    role: string
+  const signUp: AuthContextType["signUp"] = async (
+    email,
+    password,
+    fullName,
+    role
   ) => {
-    const redirectUrl = `${window.location.origin}/`;
-
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-      },
-    });
-
-    if (error) return { error };
-
-    if (data.user) {
-      const { error: profileError } = await supabase.from("profiles").insert({
-        id: data.user.id,
-        full_name: fullName,
-        role: role as "founder" | "investor" | "mentor" | "developer",
-      });
-
-      if (profileError) return { error: profileError };
+    try {
+      const u = await signUpWithProfile(email, password, fullName, role as Role);
+      const p = await fetchProfile(u.uid);
+      setProfile(p);
+      return { error: null };
+    } catch (e) {
+      return { error: e as Error };
     }
-
-    return { error: null };
   };
 
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    return { error };
+  const signIn: AuthContextType["signIn"] = async (email, password) => {
+    try {
+      await signInWithEmail(email, password);
+      return { error: null };
+    } catch (e) {
+      return { error: e as Error };
+    }
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await signOutUser();
     setProfile(null);
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, session, profile, loading, signUp, signIn, signOut }}
-    >
+    <AuthContext.Provider value={{ user, profile, loading, signUp, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
+  return ctx;
 }
