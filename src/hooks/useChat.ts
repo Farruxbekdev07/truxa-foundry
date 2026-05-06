@@ -72,7 +72,10 @@ export function useChat() {
       orderBy("created_at", "asc")
     );
     const unsub = onSnapshot(q, async (snap) => {
-      const docs = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Message, "id">) }));
+      const docs = snap.docs.map((d) => {
+        const data = d.data() as Omit<Message, "id" | "created_at"> & { created_at?: unknown };
+        return { id: d.id, ...data, created_at: ts(data.created_at) } as Message;
+      });
       const senderIds = Array.from(new Set(docs.map((m) => m.sender_id)));
       const profiles = await Promise.all(senderIds.map((id) => fetchProfile(id)));
       const map = new Map(profiles.filter(Boolean).map((p) => [p!.id, p!]));
@@ -98,7 +101,7 @@ export function useChat() {
       const enriched = await Promise.all(
         convs.map(async (c) => {
           const participants = await Promise.all(
-            (c.participants || []).map(async (uid: string) => {
+            ((c as unknown as { participants: string[] }).participants || []).map(async (uid: string) => {
               const p = await fetchProfile(uid);
               return {
                 user_id: uid,
@@ -108,7 +111,14 @@ export function useChat() {
               };
             })
           );
-          return { ...c, participants } as Conversation;
+          return {
+            id: c.id,
+            type: c.type,
+            name: c.name,
+            created_at: ts((c as unknown as { created_at?: unknown }).created_at),
+            updated_at: ts((c as unknown as { updated_at?: unknown }).updated_at),
+            participants,
+          } as Conversation;
         })
       );
       setConversations(enriched);

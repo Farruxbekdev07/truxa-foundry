@@ -56,10 +56,10 @@ export function useNotifications() {
     const unsub = onSnapshot(
       q,
       (snap) => {
-        const docs = snap.docs.map((d) => ({
-          id: d.id,
-          ...(d.data() as Omit<Notification, "id">),
-        }));
+        const docs = snap.docs.map((d) => {
+          const data = d.data() as Omit<Notification, "id" | "created_at"> & { created_at?: unknown };
+          return { id: d.id, ...data, created_at: toIso(data.created_at) } as Notification;
+        });
         setNotifications(docs);
         setUnreadCount(docs.filter((n) => !n.read).length);
         setLoading(false);
