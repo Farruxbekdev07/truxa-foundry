@@ -16,7 +16,7 @@ import {
   CircularProgress,
   Alert,
 } from '@mui/material';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/firebase/compat';
 
 interface Startup {
   id: string;

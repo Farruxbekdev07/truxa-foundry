@@ -45,7 +45,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/firebase/compat";
 import { useToast } from "@/hooks/use-toast";
 
 interface Slide {

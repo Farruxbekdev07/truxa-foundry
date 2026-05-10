@@ -13,7 +13,7 @@ import {
   Stack,
 } from '@mui/material';
 import { useAuth } from '@/lib/auth';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/firebase/compat';
 import { Save, ArrowLeft, Rocket, TrendingUp, GraduationCap, Code, User } from 'lucide-react';
 import { roleColors } from '@/theme/muiTheme';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
