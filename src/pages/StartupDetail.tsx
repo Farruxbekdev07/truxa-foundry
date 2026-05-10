@@ -12,7 +12,7 @@ import {
   Divider,
 } from "@mui/material";
 import { useAuth } from "@/lib/auth";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/firebase/compat";
 import {
   ArrowLeft,
   TrendingUp,

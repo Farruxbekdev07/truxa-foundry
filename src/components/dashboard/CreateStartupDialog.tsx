@@ -17,7 +17,7 @@ import {
   Alert,
 } from '@mui/material';
 import { useAuth } from '@/lib/auth';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/firebase/compat';
 
 interface CreateStartupDialogProps {
   open: boolean;

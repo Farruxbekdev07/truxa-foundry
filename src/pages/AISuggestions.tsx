@@ -21,7 +21,7 @@ import {
   Warning,
   CheckCircle,
 } from '@mui/icons-material';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/firebase/compat';
 
 interface Suggestions {
   productMarketFit: {

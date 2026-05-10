@@ -21,7 +21,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/firebase/compat";
 import { useAuth } from "@/lib/auth";
 
 interface AnalyticsData {

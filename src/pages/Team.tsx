@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import { Search, Users, MessageSquare, UserPlus, Code, TrendingUp, GraduationCap } from "lucide-react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/firebase/compat";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import { roleColors } from "@/theme/muiTheme";
