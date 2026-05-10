@@ -120,7 +120,7 @@ async function attachJoins(
   }
 }
 
-class QueryBuilder<T = DocumentData> implements PromiseLike<Result<T[] | T | null>> {
+class QueryBuilder implements PromiseLike<Result<unknown>> {
   private filters: Filter[] = [];
   private orderField: string | null = null;
   private orderAsc = true;
